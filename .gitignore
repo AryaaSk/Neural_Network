@@ -1,0 +1,5 @@
+#Image Files
+/mnist_png
+
+#System Files
+.DS_Store

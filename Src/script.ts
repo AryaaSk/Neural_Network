@@ -119,57 +119,22 @@ const CreateInputLayer = (pixels: Pixel[]) => {
 
 let WEIGHTS: { [k: string] : number } = {}; //k: JSON.stringify([layer1ID, layer2ID, neuron1ID, neuron2ID])
 const InitaliseWeights = (layers: Layer[]) => {
-
-    const weightToString = (weightData: any) => {
-        const weights: { key: string, value: number }[] = []; //converting to array, then stringify
-        for (const key in weightData) {
-            weights.push({
-                key: key,
-                value: weightData[key]
-            })
-        }
-        return JSON.stringify(weights);
+    const weightFunction = () => {
+        const randomNumber = -1 + Math.random() + Math.random(); //random number from -1 to 1
+        return randomNumber;
     }
 
-    const stringToWeights = (data: string) => {
-        const weightData = JSON.parse(data);
-        const weightDataDictionary: any = {};
-        for (const weight of weightData) {
-            weightDataDictionary[weight.key] = weight.value;
+    for (let i = 1; i != layers.length; i += 1) {
+        const [layer1, layer2] = [layers[i - 1], layers[i]];
+        
+        for (let a = 0; a != layer1.neurons.length; a += 1) {
+            for (let b = 0; b != layer2.neurons.length; b += 1) {
+                const [neuron1, neuron2] = [layer1.neurons[a], layer2.neurons[b]];
+
+                const key = JSON.stringify([layer1.id, layer2.id, neuron1.id, neuron2.id]);
+                WEIGHTS[key] = weightFunction();
+            }   
         }
-        return weightDataDictionary
-    }
-
-    //check local storage for weight data, if it is not there then generate randomly
-    const weightDataString = localStorage.getItem("weightData bruh");
-
-    if (weightDataString != undefined) {
-        const weightData = stringToWeights(weightDataString);
-        WEIGHTS = weightData;
-    }
-
-    else {
-        const weightFunction = () => {
-            const randomNumber = -1 + Math.random() + Math.random(); //random number from -1 to 1
-            return randomNumber;
-        }
-    
-        for (let i = 1; i != layers.length; i += 1) {
-            const [layer1, layer2] = [layers[i - 1], layers[i]];
-            
-            for (let a = 0; a != layer1.neurons.length; a += 1) {
-                for (let b = 0; b != layer2.neurons.length; b += 1) {
-                    const [neuron1, neuron2] = [layer1.neurons[a], layer2.neurons[b]];
-    
-                    const key = JSON.stringify([layer1.id, layer2.id, neuron1.id, neuron2.id]);
-                    WEIGHTS[key] = weightFunction();
-                }   
-            }
-        }
-
-        console.log(WEIGHTS);
-
-        localStorage.setItem("weightData", weightToString(WEIGHTS));
     }
 }
 

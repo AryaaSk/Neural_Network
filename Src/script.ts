@@ -96,7 +96,6 @@ class Layer {
         for (let i = 0; i != this.neurons.length; i += 1) {
             const neuron = this.neurons[i];
             const difference = (i == correctNeuronIndex) ? 1 - neuron.value : 0 - neuron.value;
-            console.log(difference)
             const differenceSquared = difference**2;
             cost += differenceSquared;
         }
@@ -119,11 +118,16 @@ const CreateInputLayer = (pixels: Pixel[]) => {
 
 let WEIGHTS: { [k: string] : number } = {}; //k: JSON.stringify([layer1ID, layer2ID, neuron1ID, neuron2ID])
 const InitaliseWeights = (layers: Layer[]) => {
+
+    const weightData = localStorage.getItem("weightData");
+    let weightArray = (weightData == undefined) ? undefined : JSON.parse(weightData);
+
     const weightFunction = () => {
         const randomNumber = -1 + Math.random() + Math.random(); //random number from -1 to 1
         return randomNumber;
     }
 
+    let counter = 0;
     for (let i = 1; i != layers.length; i += 1) {
         const [layer1, layer2] = [layers[i - 1], layers[i]];
         
@@ -132,10 +136,29 @@ const InitaliseWeights = (layers: Layer[]) => {
                 const [neuron1, neuron2] = [layer1.neurons[a], layer2.neurons[b]];
 
                 const key = JSON.stringify([layer1.id, layer2.id, neuron1.id, neuron2.id]);
-                WEIGHTS[key] = weightFunction();
+
+                if (weightArray == undefined) { //if weight array is undefined then create random value
+                    WEIGHTS[key] = weightFunction();
+                }
+                else {
+                    WEIGHTS[key] = weightArray[counter];
+                }
+
+                counter += 1;
             }   
         }
     }
+
+    if (weightArray == undefined) { //save to local storage so it can be persisted
+        SaveWeights();
+    }
+}
+const SaveWeights = () => {
+    const array: number[] = [];
+    for (const key in WEIGHTS) {
+        array.push(WEIGHTS[key]);
+    }
+    localStorage.setItem("weightData", JSON.stringify(array));
 }
 
 
@@ -144,22 +167,41 @@ const InitaliseWeights = (layers: Layer[]) => {
 
 
 const Main = async () => {
-    const inputImagePath = "/mnist_png/training/0/1.png";
-    const image = <HTMLImageElement> await GetImage(inputImagePath);
-    const pixels = GetImageData(<HTMLImageElement>image);
+    let totalCost = 0;
 
-    const inputLayer = CreateInputLayer(pixels);
-    const hiddenLayer1 = new Layer(16);
-    const hiddenLayer2 = new Layer(16);
-    const outputLayer = new Layer(10);
-    InitaliseWeights([inputLayer, hiddenLayer1, hiddenLayer2, outputLayer]);
-    
-    hiddenLayer1.calculateValues(inputLayer);
-    hiddenLayer2.calculateValues(hiddenLayer1);
-    outputLayer.calculateValues(hiddenLayer2);
+    const images = [
+        "0/1",
+        "1/3",
+        "2/5",
+        "3/7",
+        "4/2",
+        "5/0",
+        "6/13",
+        "7/15",
+        "8/17",
+        "9/4",
+    ]
 
-    const cost = outputLayer.calculateCost(0); //0 is first neuron, and is also training image
+    for (let counter = 0; counter != images.length; counter += 1) {
+        const inputImagePath = `/mnist_png/training/${images[counter]}.png`;
+        const image = <HTMLImageElement> await GetImage(inputImagePath);
+        const pixels = GetImageData(<HTMLImageElement>image);
 
-    //Now need to find a way to minimise cost
+        const inputLayer = CreateInputLayer(pixels);
+        const hiddenLayer1 = new Layer(16);
+        const hiddenLayer2 = new Layer(16);
+        const outputLayer = new Layer(10);
+        InitaliseWeights([inputLayer, hiddenLayer1, hiddenLayer2, outputLayer]);
+        
+        hiddenLayer1.calculateValues(inputLayer);
+        hiddenLayer2.calculateValues(hiddenLayer1);
+        outputLayer.calculateValues(hiddenLayer2);
+
+        const cost = outputLayer.calculateCost(counter % 10); //0 is first neuron, and is also training image
+        totalCost += cost;
+    }
+
+    const averageCost = totalCost / images.length;
+    console.log(averageCost); //we need to find a way to reduce average cost
 }
 Main();

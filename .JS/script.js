@@ -1,4 +1,5 @@
 "use strict";
+const STEP_SIZE = 0.1;
 const GetImage = (path) => {
     const promise = new Promise((resolve) => {
         const image = new Image();
@@ -125,10 +126,14 @@ const SaveWeights = () => {
     }
     localStorage.setItem("weightData", JSON.stringify(array));
 };
+const AdjustWeights = (network, correctIndex) => {
+    console.table(network[network.length - 1].neurons);
+};
 const Main = async () => {
     let totalCost = 0;
     const images = [
         "0/1",
+        /*
         "1/3",
         "2/5",
         "3/7",
@@ -138,21 +143,27 @@ const Main = async () => {
         "7/15",
         "8/17",
         "9/4",
+        */
     ];
     for (let counter = 0; counter != images.length; counter += 1) {
         const inputImagePath = `/mnist_png/training/${images[counter]}.png`;
         const image = await GetImage(inputImagePath);
         const pixels = GetImageData(image);
-        const inputLayer = CreateInputLayer(pixels);
-        const hiddenLayer1 = new Layer(16);
-        const hiddenLayer2 = new Layer(16);
-        const outputLayer = new Layer(10);
-        InitaliseWeights([inputLayer, hiddenLayer1, hiddenLayer2, outputLayer]);
-        hiddenLayer1.calculateValues(inputLayer);
-        hiddenLayer2.calculateValues(hiddenLayer1);
-        outputLayer.calculateValues(hiddenLayer2);
-        const cost = outputLayer.calculateCost(counter % 10); //0 is first neuron, and is also training image
+        const layers = [];
+        layers.push(CreateInputLayer(pixels)); //input
+        layers.push(new Layer(16));
+        layers.push(new Layer(16));
+        layers.push(new Layer(10)); //output
+        InitaliseWeights(layers);
+        layers[1].calculateValues(layers[0]);
+        layers[2].calculateValues(layers[1]);
+        layers[3].calculateValues(layers[2]);
+        const cost = layers[3].calculateCost(counter % 10); //0 is first neuron, and is also training image
         totalCost += cost;
+        //to minimise cost we need to increase all weights which will increase the output neuron corresponding to the one we want
+        //however we also need to decrease all weights which will affect the other output neurons
+        //increase/decrease refers to further/closer to 0
+        AdjustWeights(layers, counter & 10);
     }
     const averageCost = totalCost / images.length;
     console.log(averageCost); //we need to find a way to reduce average cost

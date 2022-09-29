@@ -28,20 +28,20 @@ const VisualiseData = (canvas: Canvas, data: DataPoint[]) => {
     }
 }
 
-//SEEM TO HAVE SOME ERROR THAT NEURAL NETWORK IS RETURNING SAME RESULT FOR ALL DIFFERENT INPUTS
+//SEEM TO HAVE SOME ERROR THAT NEURAL NETWORK IS RETURNING SAME RESULT FOR ALL DIFFERENT INPUTS, actually it seems to just give same results for certain values (possibly due to activation function)
 const VisualiseNeuralNetwork = (canvas: Canvas, network: Layer[]) => {
     //split canvas into 20x20 grid, and just check what output would be for center of all grid cells
-    const gridSize = 20;
+    const gridSize = 100;
     const widthInterval = canvas.canvasWidth / gridSize;
     const heightInterval = canvas.canvasHeight / gridSize;
     
-    for (let i = 0; i != gridSize; i += 1) {
+    for (let i = -(gridSize / 2); i != gridSize / 2; i += 1) {
         const x =  (i * widthInterval) + (widthInterval / 2); //to get the center of the point
-        for (let a = 0; a != gridSize; a += 1) {
+        for (let a = -(gridSize / 2); a != gridSize / 2; a += 1) {
             const y = (a * heightInterval) + (heightInterval / 2);
 
             const outputLayer = RunNetwork(network, [x, y]); //find highest neuron, if it is [0] then the network's result is false, otherwise [1] means the network thinks it's true
-            console.log(x, y);
+            //console.log(x, y, outputLayer.neurons);
 
             const highestIndexNeuron = LayerFindHighestNeuronValueIndex(outputLayer);
             let blockColour = "";

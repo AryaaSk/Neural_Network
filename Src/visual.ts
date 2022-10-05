@@ -29,9 +29,9 @@ const VisualiseData = (canvas: Canvas, data: DataPoint[]) => {
 }
 
 //SEEM TO HAVE SOME ERROR THAT NEURAL NETWORK IS RETURNING SAME RESULT FOR ALL DIFFERENT INPUTS, actually it seems to just give same results for certain values (possibly due to activation function)
-const VisualiseNeuralNetwork = (canvas: Canvas, network: Layer[]) => {
+const VisualiseNeuralNetwork = (canvas: Canvas, network: Layer[], detail: number) => {
     //split canvas into x*x grid, and just check what output would be for center of all grid cells
-    const gridSize = 20;
+    const gridSize = detail;
     const widthInterval = canvas.canvasWidth / gridSize;
     const heightInterval = canvas.canvasHeight / gridSize;
     

@@ -1,15 +1,15 @@
 const CANVAS = new Canvas();
 
-const AddNewPoints = () => { //this function can just be called when I need more data points
+const AddNewPoints = (result: boolean, colour: string) => { //this function can just be called when I need more data points
     const newData: DataPoint[] = [];
     const Data = (x: number, y: number, result: boolean) => { return { x: x, y: y, result: result }; };
 
     document.body.onclick = ($e) => {
         const screenPosition = { x: $e.clientX, y: $e.clientY };
         const gridPosition = { x: CANVAS.GridX(screenPosition.x), y: CANVAS.GridY(screenPosition.y) };
-        CANVAS.plotPoint([gridPosition.x, gridPosition.y], "blue");
+        CANVAS.plotPoint([gridPosition.x, gridPosition.y], colour);
 
-        newData.push(Data(gridPosition.x, gridPosition.y, true));
+        newData.push(Data(gridPosition.x, gridPosition.y, result));
     }
     document.onkeydown = () => {
         const json = JSON.stringify(newData);

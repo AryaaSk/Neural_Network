@@ -174,7 +174,7 @@ const Main = () => {
     InitialiseBiases(network);
     CANVAS.linkCanvas("canvas");
     VisualiseData(CANVAS, DATA);
-    VisualiseNeuralNetwork(CANVAS, network, 100);
+    VisualiseNeuralNetwork(CANVAS, network, 20);
     console.log("Cost: " + CalculateCost(network, DATA));
     let miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE);
     let miniBatchCounter = 0;
@@ -193,8 +193,10 @@ const Main = () => {
     const interval2 = setInterval(() => {
         CANVAS.clearCanvas();
         VisualiseData(CANVAS, DATA);
-        VisualiseNeuralNetwork(CANVAS, network, 100);
+        VisualiseNeuralNetwork(CANVAS, network, 20);
     }, 1000);
+    clearInterval(interval1);
+    clearInterval(interval2);
     document.onkeydown = ($e) => {
         if ($e.key.toLowerCase() == " ") {
             clearInterval(interval1);

@@ -142,7 +142,6 @@ const DecreaseCost = (network: Layer[], weights: {[k: string]: number}, stepSize
 
         weights[key] += deltaX;
         const deltaY = CalculateCost(network, dataset) - currentCost;
-
         const gradient = deltaY / deltaX;
         weights[key] -= deltaX; //store old value to prevent this change from affecting future iterations
 
@@ -219,7 +218,7 @@ const Main = () => {
 
     CANVAS.linkCanvas("canvas");
     VisualiseData(CANVAS, DATA);
-    VisualiseNeuralNetwork(CANVAS, network, 100);
+    VisualiseNeuralNetwork(CANVAS, network, 20);
     console.log("Cost: " + CalculateCost(network, DATA));
 
     let miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE);
@@ -243,8 +242,11 @@ const Main = () => {
     const interval2 = setInterval(() => {
         CANVAS.clearCanvas();
         VisualiseData(CANVAS, DATA);
-        VisualiseNeuralNetwork(CANVAS, network, 100);
+        VisualiseNeuralNetwork(CANVAS, network, 20);
     }, 1000);
+
+    clearInterval(interval1);
+    clearInterval(interval2);
 
     document.onkeydown = ($e) => {
         if ($e.key.toLowerCase() == " ") {

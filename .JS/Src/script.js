@@ -22,7 +22,7 @@ class Neuron {
         }
     }
     static ActivationFunction(num) {
-        return HyperbolicTan(num);
+        return Sigmoid(num);
     }
 }
 const Sigmoid = (num) => {

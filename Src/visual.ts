@@ -61,3 +61,12 @@ const VisualiseNeuralNetwork = (canvas: Canvas, network: Layer[], detail: number
         }
     }
 }
+const LayerFindHighestNeuronValueIndex = (layer: Layer) => {
+    let highestIndex = 0;
+    for (const [i, neuron] of layer.neurons.entries()) {
+        if (neuron.value > layer.neurons[highestIndex].value) {
+            highestIndex = i;
+        }
+    }
+    return highestIndex;
+}

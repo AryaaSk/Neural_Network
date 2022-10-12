@@ -15,6 +15,7 @@ class Neuron {
     //bias stored in separate dictionary
     constructor(value) {
         this.id = "";
+        this.rawValue = 0;
         this.value = 0;
         this.id = RandomID();
         if (value != undefined) {
@@ -57,34 +58,17 @@ const LayerCalculateValues = (currentLayer, previousLayer) => {
             sum += prevNeuron.value * nodeWeight;
         }
         const bias = BIASES[JSON.stringify([neuron.id])];
-        neuron.value = Neuron.ActivationFunction(sum + bias);
+        const rawValue = sum + bias;
+        neuron.rawValue = rawValue;
+        neuron.value = Neuron.ActivationFunction(rawValue);
     }
-};
-const LayerCalculateAverageCost = (layer, correctNeuronIndex) => {
-    let totalCost = 0;
-    for (let i = 0; i != layer.neurons.length; i += 1) {
-        const neuron = layer.neurons[i];
-        const difference = (i == correctNeuronIndex) ? 1 - neuron.value : 0 - neuron.value;
-        const differenceSquared = difference ** 2;
-        totalCost += differenceSquared;
-    }
-    const averageCost = totalCost / layer.neurons.length;
-    return averageCost;
-};
-const LayerFindHighestNeuronValueIndex = (layer) => {
-    let highestIndex = 0;
-    for (const [i, neuron] of layer.neurons.entries()) {
-        if (neuron.value > layer.neurons[highestIndex].value) {
-            highestIndex = i;
-        }
-    }
-    return highestIndex;
 };
 let WEIGHTS = {}; //k: JSON.stringify([layer1ID, layer2ID, neuron1ID, neuron2ID])
 let BIASES = {}; //k: JSON.stringify([neuron.id]);
 const RunNetwork = (network, inputs) => {
     const inputLayer = network[0];
     for (let i = 0; i != inputs.length; i += 1) {
+        inputLayer.neurons[i].rawValue = inputs[i];
         inputLayer.neurons[i].value = inputs[i];
     }
     for (let i = 1; i != network.length; i += 1) {
@@ -104,6 +88,17 @@ const CalculateCost = (network, dataset) => {
         totalCost += LayerCalculateAverageCost(outputLayer, expectedResultIndex);
     }
     const averageCost = totalCost / dataset.length;
+    return averageCost;
+};
+const LayerCalculateAverageCost = (layer, correctNeuronIndex) => {
+    let totalCost = 0;
+    for (let i = 0; i != layer.neurons.length; i += 1) {
+        const neuron = layer.neurons[i];
+        const difference = (i == correctNeuronIndex) ? 1 - neuron.value : 0 - neuron.value;
+        const differenceSquared = difference ** 2;
+        totalCost += differenceSquared;
+    }
+    const averageCost = totalCost / layer.neurons.length;
     return averageCost;
 };
 const DecreaseCost = (network, weights, stepSize, dataset) => {

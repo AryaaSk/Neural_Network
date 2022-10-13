@@ -4,7 +4,9 @@ interface DataPoint {
     result: boolean;
 }
 const STEP_SIZE = 0.001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
-const MINI_BATCH_SIZE = 300;
+const REGULARISATION = 0.1;
+const MOMENTUM = 0.9;
+const MINI_BATCH_SIZE = 30;
 
 let DATA: DataPoint[] = [];
 DATA = DATA.concat(JSON.parse('[{"x":-120,"y":203.5,"result":true},{"x":-208,"y":126.5,"result":true},{"x":-215,"y":41.5,"result":true},{"x":-173,"y":-65.5,"result":true},{"x":-73,"y":-113.5,"result":true},{"x":42,"y":-122.5,"result":true},{"x":144,"y":-118.5,"result":true},{"x":214,"y":-74.5,"result":true},{"x":242,"y":-1.5,"result":true},{"x":237,"y":86.5,"result":true},{"x":195,"y":150.5,"result":true},{"x":107,"y":183.5,"result":true},{"x":-2,"y":202.5,"result":true},{"x":-56,"y":161.5,"result":true},{"x":-125,"y":120.5,"result":true},{"x":-144,"y":61.5,"result":true},{"x":-96,"y":-8.5,"result":true},{"x":-5,"y":-47.5,"result":true},{"x":123,"y":-49.5,"result":true},{"x":172,"y":3.5,"result":true},{"x":138,"y":67.5,"result":true},{"x":59,"y":12.5,"result":true},{"x":-11,"y":40.5,"result":true},{"x":-87,"y":85.5,"result":true},{"x":2,"y":116.5,"result":true},{"x":-14,"y":85.5,"result":true},{"x":76,"y":61.5,"result":true},{"x":109,"y":105.5,"result":true},{"x":51,"y":129.5,"result":true},{"x":5,"y":164.5,"result":true},{"x":-59,"y":36.5,"result":true},{"x":-165,"y":-2.5,"result":true},{"x":-79,"y":-58.5,"result":true},{"x":82,"y":-86.5,"result":true},{"x":-35,"y":-1.5,"result":true},{"x":27,"y":49.5,"result":true},{"x":-132,"y":32.5,"result":true},{"x":-133,"y":143.5,"result":true},{"x":-69,"y":124.5,"result":true},{"x":-111,"y":-29.5,"result":true},{"x":-133,"y":109.5,"result":true},{"x":-198,"y":59.5,"result":true},{"x":-153,"y":-40.5,"result":true},{"x":-91,"y":-111.5,"result":true},{"x":72,"y":-128.5,"result":true},{"x":188,"y":-35.5,"result":true},{"x":181,"y":119.5,"result":true},{"x":110,"y":46.5,"result":true},{"x":-54,"y":-89.5,"result":true},{"x":62,"y":-57.5,"result":true},{"x":19,"y":-65.5,"result":true},{"x":59,"y":-19.5,"result":true},{"x":74,"y":131.5,"result":true},{"x":64,"y":111.5,"result":true},{"x":25,"y":27.5,"result":true},{"x":47,"y":158.5,"result":true},{"x":11,"y":184.5,"result":true},{"x":-73,"y":186.5,"result":true},{"x":-132,"y":88.5,"result":true},{"x":-120,"y":-31.5,"result":true},{"x":-39,"y":155.5,"result":true},{"x":-78,"y":27.5,"result":true},{"x":-61,"y":138.5,"result":true},{"x":-182,"y":30.5,"result":true},{"x":-201,"y":63.5,"result":true},{"x":-240,"y":44.5,"result":true},{"x":-204,"y":-75.5,"result":true},{"x":-178,"y":-97.5,"result":true},{"x":-182,"y":-67.5,"result":true},{"x":-52,"y":-131.5,"result":true},{"x":-9,"y":-135.5,"result":true},{"x":77,"y":-105.5,"result":true},{"x":138,"y":62.5,"result":true},{"x":177,"y":-9.5,"result":true},{"x":114,"y":156.5,"result":true},{"x":105,"y":92.5,"result":true},{"x":33,"y":160.5,"result":true},{"x":-42,"y":98.5,"result":true},{"x":-80,"y":30.5,"result":true},{"x":-87,"y":109.5,"result":true},{"x":-84,"y":185.5,"result":true},{"x":-143,"y":110.5,"result":true},{"x":-135,"y":144.5,"result":true},{"x":-124,"y":102.5,"result":true},{"x":-175,"y":71.5,"result":true},{"x":-175,"y":-9.5,"result":true},{"x":-37,"y":-67.5,"result":true},{"x":-36,"y":32.5,"result":true},{"x":-3,"y":-4.5,"result":true},{"x":84,"y":-7.5,"result":true},{"x":96,"y":-3.5,"result":true},{"x":97,"y":-9.5,"result":true},{"x":122,"y":-9.5,"result":true},{"x":100,"y":-0.5,"result":true},{"x":104,"y":-12.5,"result":true},{"x":7,"y":52.5,"result":true},{"x":56,"y":60.5,"result":true},{"x":83,"y":-53.5,"result":true},{"x":-6,"y":106.5,"result":true},{"x":51,"y":12.5,"result":true},{"x":19,"y":-27.5,"result":true},{"x":41,"y":81.5,"result":true},{"x":24,"y":-36.5,"result":true}]'));
@@ -202,9 +204,8 @@ const Main = () => {
     if (network.length == 0) {
         const inputLayer = new Layer(2);
         const hiddenLayer1 = new Layer(3);
-        const hiddenLayer2 = new Layer(3);
         const outputLayer = new Layer(2);
-        network.push(inputLayer, hiddenLayer1, hiddenLayer2, outputLayer);
+        network.push(inputLayer, hiddenLayer1, outputLayer);
         SaveNeuralNetwork(network);
     }
     InitaliseWeights(network);
@@ -214,14 +215,26 @@ const Main = () => {
     VisualiseData(CANVAS, DATA);
     VisualiseNeuralNetwork(CANVAS, network, 20);
     console.log("Cost: " + CalculateCost(network, DATA));
+    
+    console.log(network);
 
+    Learn(network, STEP_SIZE, DATA);
+    console.log("Cost: " + CalculateCost(network, DATA));
+    console.log(network);
+
+    Learn(network, STEP_SIZE, DATA);
+    console.log("Cost: " + CalculateCost(network, DATA));
+
+
+    /*
     let miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE);
     let miniBatchCounter = 0;
     const interval1 = setInterval(() => {
         const miniBatch = miniBatches[miniBatchCounter % miniBatches.length];
 
-        DecreaseCost(network, WEIGHTS, STEP_SIZE, miniBatch);
-        DecreaseCost(network, BIASES, STEP_SIZE, miniBatch); //use same function but just replace weights with biases
+        //DecreaseCost(network, WEIGHTS, STEP_SIZE, miniBatch);
+        //DecreaseCost(network, BIASES, STEP_SIZE, miniBatch); //use same function but just replace weights with biases
+        Learn(network, STEP_SIZE, miniBatch);
         console.log("Cost: " + CalculateCost(network, DATA));
 
         SaveWeights();
@@ -239,8 +252,8 @@ const Main = () => {
         VisualiseNeuralNetwork(CANVAS, network, 20);
     }, 1000);
 
-    clearInterval(interval1);
-    clearInterval(interval2);
+    //clearInterval(interval1);
+    //clearInterval(interval2);
 
     document.onkeydown = ($e) => {
         if ($e.key.toLowerCase() == " ") {
@@ -248,5 +261,6 @@ const Main = () => {
             clearInterval(interval2);
         }
     }
+    */
 }
 Main();

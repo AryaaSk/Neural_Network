@@ -80,7 +80,14 @@ So finally, if we compare all three layers (going from last to first):
 
 
 I think I'm doing something wrong, since it is ambiguous which weight I should be using for the [Weight...] variables
-- I have watched a few tutorials, and I believe that when you have multiply by a [Weight...], you have to add up all weights coming out of that neuron, and use that as the partial derivative of d[RO]/d[Op]
+- I have watched a few tutorials, and I believe that when you multiply: [Weight...] * [NodeValue], you add up the sum of all the [weights coming out of neuron] * [node value of the neurons]
+- This would give it a higher nodeValue, which makes sense because it affects the output much more than a neuron in a later layer
+
+
+
+It is a similar thing for the bias:
+- d[NC]/d[Bias] = d[RO]/d[Bias] * d[O]/d[RO] * d[NC]/d[O]
+- d[NC]/d[Bias] = 1 * (1 - Sigmoid(RO))Sigmoid(RO) * 2([ExpectedOutput] - [O])
 */
 
 
@@ -90,30 +97,88 @@ I think I'm doing something wrong, since it is ambiguous which weight I should b
 const SigmoidDerivative = (num: number) => {
     return (1 - Sigmoid(num)) * Sigmoid(num);
 }
-const LearnWeights = (network: Layer[], weights: {[k: string]: number}, stepSize: number, dataset: DataPoint[]) => {
+const Learn = (network: Layer[], stepSize: number, dataset: DataPoint[]) => {
+    //Initialise gradient storage
+    const weightDescentGradients: { [weightID: string]: number } = {};
+    const biasDescentGradients: { [biasID: string]: number } = {};
+    for (const weightKey in WEIGHTS) {
+        weightDescentGradients[weightKey] = 0;
+    }
+    for (const biasKey in BIASES) {
+        biasDescentGradients[biasKey] = 0;
+    }
+
     for (const data of dataset) {
         RunNetwork(network, [data.x, data.y]); //forward propogate the data through the network
 
-        const nodeValues: { [id: string] : number } = {};
 
+
+        const nodeValues: { [neuronID: string] : number } = {};
         //Output layer derivative: d[NC]/d[Weight] = [PreviousOutput] * (1 - Sigmoid(RO))Sigmoid(RO) * 2([ExpectedOutput] - [O])
-        const previousLayer = network[network.length - 2];
         const outputLayer = network[network.length - 1];
-        for (const prevNeuron of previousLayer.neurons) {
-            for (const neuron of outputLayer.neurons) {
-                const weightKey = JSON.stringify([previousLayer.id, outputLayer.id, prevNeuron.id, neuron.id])
-                
-                //Go through each weight in the last layer, calculate derivative of d[NC]/d[Weight], then just modify weight using gradient descent
-                const PreviousOutput = prevNeuron.value;
-                const ActivationDerivative = SigmoidDerivative(neuron.rawValue);
-                const ExpectedOutput = Number(data.result);
-                const DerivativeCostWRTOutput = 2 * (ExpectedOutput - neuron.value);
+        const previousLayer = network[network.length - 2];
 
-                const nodeValue = ActivationDerivative * DerivativeCostWRTOutput; //set the node value for the specific neuron
+        for (const neuron of outputLayer.neurons) {
+            //Go through each weight in the last layer, calculate derivative of d[NC]/d[Weight], then just modify weight using gradient descent
+            const ActivationDerivative = SigmoidDerivative(neuron.rawValue);
+            const ExpectedOutput = Number(data.result);
+            const DerivativeCostWRTOutput = 2 * (ExpectedOutput - neuron.value);
+
+            const nodeValue = ActivationDerivative * DerivativeCostWRTOutput; //set the node value for the specific neuron
+            nodeValues[neuron.id] = nodeValue;
+
+            UpdateWeightsBiases(nodeValue, neuron, outputLayer, previousLayer, weightDescentGradients, biasDescentGradients, stepSize);
+        }
+
+
+
+        //now we just backpropogate until we have gone through all the hidden layers
+        for (let i = network.length - 2; i != 0; i -= 1) {
+            const nextLayer = network[i + 1];
+            const layer = network[i];
+            const previousLayer = network[i - 1];
+
+            //d[NC]/d[WeightPrev] = [PreviousPreviousOutput] * (1 - Sigmoid(ROp))Sigmoid(ROp) * [Weight] * (1 - Sigmoid(RO))Sigmoid(RO) * 2([ExpectedOutput] - [O])
+
+            //calculate node values, the sum of the [weights out of neuron] * [node values of neurons in next layer], then multiplied by ActivationDerivative(ROp)
+            for (const neuron of layer.neurons) {
+                let sum = 0;
+                for (const nextNeuron of nextLayer.neurons) {
+                    const weightBetweenNeurons = WEIGHTS[JSON.stringify([layer.id, nextLayer.id, neuron.id, nextNeuron.id])];
+                    const nextNeuronNodeValue = nodeValues[nextNeuron.id];
+                    sum += weightBetweenNeurons * nextNeuronNodeValue;
+                }
+                
+                const ActivationDerivative = SigmoidDerivative(neuron.rawValue);
+                const nodeValue = ActivationDerivative * sum;
                 nodeValues[neuron.id] = nodeValue;
 
-                //PROBLEM - NODE VALUE WILL BE CONSTANT THROUGHOUT ALL ITERATIONS SINCE THEY ARE NOT AFFECTED BY ANY WEIGHTS OR PREVIOUS NEURONS, WILL HAVE TO MOVE THE NODE VALUE CODE OUTSIDE THE LOOP
-            }   
+                UpdateWeightsBiases(nodeValue, neuron, layer, previousLayer, weightDescentGradients, biasDescentGradients, stepSize);
+            }
         }
     }
+
+    //Apply weights and biases for current layer
+    const weightDecay = (1 - REGULARISATION * stepSize);
+    for (const weightKey in weightDescentGradients) {
+        WEIGHTS[weightKey] = weightDecay * weightDescentGradients[weightKey];
+    }
+    for (const biasKey in biasDescentGradients) {
+        BIASES[biasKey] = biasDescentGradients[biasKey];
+    }
+}
+
+const UpdateWeightsBiases = (nodeValue: number, currentNeuron: Neuron, currentlayer: Layer, previousLayer: Layer, weightDescentGradients: {[weightID: string] : number}, biasDescentGradients: {[biasID: string] : number}, stepSize: number) => {
+    for (const prevNeuron of previousLayer.neurons) {
+        const weightKey = JSON.stringify([previousLayer.id, currentlayer.id, prevNeuron.id, currentNeuron.id])
+        const PreviousOutput = prevNeuron.value;
+
+        const weightGradient = PreviousOutput * nodeValue;
+        weightDescentGradients[weightKey] -= weightGradient * stepSize; //add since this will be repeated for all data points
+    }
+
+    //d[NC]/d[Bias] = 1 * (1 - Sigmoid(RO))Sigmoid(RO) * 2([ExpectedOutput] - [O])
+    const biasGradient = 1 * nodeValue;
+    const biasKey = JSON.stringify([currentNeuron.id]);
+    biasDescentGradients[biasKey] -= biasGradient * stepSize;
 }

@@ -1,5 +1,5 @@
 "use strict";
-const STEP_SIZE = 0.001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
+const STEP_SIZE = 0.01; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const REGULARISATION = 0.1;
 const MOMENTUM = 0.9;
 const MINI_BATCH_SIZE = 30;
@@ -162,8 +162,9 @@ const Main = () => {
     if (network.length == 0) {
         const inputLayer = new Layer(2);
         const hiddenLayer1 = new Layer(3);
+        const hiddenLayer2 = new Layer(3);
         const outputLayer = new Layer(2);
-        network.push(inputLayer, hiddenLayer1, outputLayer);
+        network.push(inputLayer, hiddenLayer1, hiddenLayer2, outputLayer);
         SaveNeuralNetwork(network);
     }
     InitaliseWeights(network);
@@ -178,41 +179,33 @@ const Main = () => {
     console.log(network);
     Learn(network, STEP_SIZE, DATA);
     console.log("Cost: " + CalculateCost(network, DATA));
-    /*
     let miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE);
     let miniBatchCounter = 0;
     const interval1 = setInterval(() => {
         const miniBatch = miniBatches[miniBatchCounter % miniBatches.length];
-
         //DecreaseCost(network, WEIGHTS, STEP_SIZE, miniBatch);
         //DecreaseCost(network, BIASES, STEP_SIZE, miniBatch); //use same function but just replace weights with biases
         Learn(network, STEP_SIZE, miniBatch);
         console.log("Cost: " + CalculateCost(network, DATA));
-
         SaveWeights();
         SaveBiases();
-
         miniBatchCounter += 1;
         if (miniBatchCounter % miniBatches.length == 0) {
             miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE); //create new mini batches to introduce new variety on every cycle
         }
     }, 16);
-
     const interval2 = setInterval(() => {
         CANVAS.clearCanvas();
         VisualiseData(CANVAS, DATA);
         VisualiseNeuralNetwork(CANVAS, network, 20);
     }, 1000);
-
     //clearInterval(interval1);
     //clearInterval(interval2);
-
     document.onkeydown = ($e) => {
         if ($e.key.toLowerCase() == " ") {
             clearInterval(interval1);
             clearInterval(interval2);
         }
-    }
-    */
+    };
 };
 Main();

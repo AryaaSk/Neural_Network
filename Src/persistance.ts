@@ -5,12 +5,25 @@ const SaveNeuralNetwork = (layers: Layer[]) => {
 }
 const RetrieveNeuralNetwork = (): Layer[] => {
     const json = localStorage.getItem("neuralNetwork");
+    let network: Layer[] = [];
     if (json == null) {
-        return [];
+        network = [];
     }
     else {
-        return JSON.parse(json);
+        network = JSON.parse(json);
     }
+
+    if (network.length == 0) {
+        const inputLayer = new Layer(2);
+        const hiddenLayer1 = new Layer(2);
+        const outputLayer = new Layer(2);
+        network.push(inputLayer, hiddenLayer1, outputLayer);
+        SaveNeuralNetwork(network);
+    }
+    InitaliseWeights(network);
+    InitialiseBiases(network);
+    
+    return network;
 }
 
 

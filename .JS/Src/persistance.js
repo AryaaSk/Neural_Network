@@ -6,12 +6,23 @@ const SaveNeuralNetwork = (layers) => {
 };
 const RetrieveNeuralNetwork = () => {
     const json = localStorage.getItem("neuralNetwork");
+    let network = [];
     if (json == null) {
-        return [];
+        network = [];
     }
     else {
-        return JSON.parse(json);
+        network = JSON.parse(json);
     }
+    if (network.length == 0) {
+        const inputLayer = new Layer(2);
+        const hiddenLayer1 = new Layer(2);
+        const outputLayer = new Layer(2);
+        network.push(inputLayer, hiddenLayer1, outputLayer);
+        SaveNeuralNetwork(network);
+    }
+    InitaliseWeights(network);
+    InitialiseBiases(network);
+    return network;
 };
 const InitaliseWeights = (layers) => {
     const weightData = localStorage.getItem("weightData");

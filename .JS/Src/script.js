@@ -158,25 +158,11 @@ const CreateMiniBatches = (dataset, batchSize) => {
 };
 const Main = () => {
     const network = RetrieveNeuralNetwork();
-    if (network.length == 0) {
-        const inputLayer = new Layer(2);
-        const hiddenLayer1 = new Layer(2);
-        const outputLayer = new Layer(2);
-        network.push(inputLayer, hiddenLayer1, outputLayer);
-        SaveNeuralNetwork(network);
-    }
-    InitaliseWeights(network);
-    InitialiseBiases(network);
     CANVAS.linkCanvas("canvas");
     VisualiseData(CANVAS, DATA);
-    //VisualiseNeuralNetwork(CANVAS, network, 20);
+    VisualiseNeuralNetwork(CANVAS, network, 20);
     console.log("Cost: " + CalculateCost(network, DATA));
-    Learn(network, STEP_SIZE, DATA);
-    console.log("Cost: " + CalculateCost(network, DATA));
-    Learn(network, STEP_SIZE, DATA);
-    console.log("Cost: " + CalculateCost(network, DATA));
-    let miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE);
-    let miniBatchCounter = 0;
+    let [miniBatches, miniBatchCounter] = [CreateMiniBatches(DATA, MINI_BATCH_SIZE), 0];
     const interval1 = setInterval(() => {
         const miniBatch = miniBatches[miniBatchCounter % miniBatches.length];
         //DecreaseCost(network, WEIGHTS, STEP_SIZE, miniBatch);

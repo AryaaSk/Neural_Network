@@ -3,7 +3,7 @@ interface DataPoint {
     y: number;
     result: boolean;
 }
-const STEP_SIZE = 0.001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
+const STEP_SIZE = 0.1; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const MINI_BATCH_SIZE = 30;
 
 let DATA: DataPoint[] = [];
@@ -36,6 +36,9 @@ class Neuron {
     static ActivationFunction(num: number) {
         return Sigmoid(num);
         //return Math.tanh(num);
+    }
+    static ActivationDerivative(num: number) {
+        return (1 - Sigmoid(num)) * Sigmoid(num);
     }
 }
 const Sigmoid = (num: number) => {
@@ -197,33 +200,17 @@ const CreateMiniBatches = (dataset: DataPoint[], batchSize: number) => {
 
 
 
+
 const Main = () => {
     const network = RetrieveNeuralNetwork();
 
-    if (network.length == 0) {
-        const inputLayer = new Layer(2);
-        const hiddenLayer1 = new Layer(2);
-        const outputLayer = new Layer(2);
-        network.push(inputLayer, hiddenLayer1, outputLayer);
-        SaveNeuralNetwork(network);
-    }
-    InitaliseWeights(network);
-    InitialiseBiases(network);
-
     CANVAS.linkCanvas("canvas");
     VisualiseData(CANVAS, DATA);
-    //VisualiseNeuralNetwork(CANVAS, network, 20);
+    VisualiseNeuralNetwork(CANVAS, network, 20);
     console.log("Cost: " + CalculateCost(network, DATA));
 
-    Learn(network, STEP_SIZE, DATA);
-    console.log("Cost: " + CalculateCost(network, DATA));
 
-    Learn(network, STEP_SIZE, DATA);
-    console.log("Cost: " + CalculateCost(network, DATA));
-    
-
-    let miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE);
-    let miniBatchCounter = 0;
+    let [miniBatches, miniBatchCounter] = [CreateMiniBatches(DATA, MINI_BATCH_SIZE), 0];
     const interval1 = setInterval(() => {
         const miniBatch = miniBatches[miniBatchCounter % miniBatches.length];
 

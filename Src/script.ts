@@ -3,9 +3,7 @@ interface DataPoint {
     y: number;
     result: boolean;
 }
-const STEP_SIZE = 0.01; //when the cost starts to fluctuate, just reduce the STEP_SIZE
-const REGULARISATION = 0.1;
-const MOMENTUM = 0.9;
+const STEP_SIZE = 0.001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const MINI_BATCH_SIZE = 30;
 
 let DATA: DataPoint[] = [];
@@ -37,6 +35,7 @@ class Neuron {
 
     static ActivationFunction(num: number) {
         return Sigmoid(num);
+        //return Math.tanh(num);
     }
 }
 const Sigmoid = (num: number) => {
@@ -122,7 +121,7 @@ const LayerCalculateAverageCost = (layer: Layer, correctNeuronIndex: number) => 
         const neuron = layer.neurons[i];
         const difference = (i == correctNeuronIndex) ? 1 - neuron.value : 0 - neuron.value;
         const differenceSquared = difference**2;
-        totalCost += differenceSquared;
+        totalCost += (0.5 * differenceSquared);
     }
     const averageCost = totalCost / layer.neurons.length;
     return averageCost;
@@ -203,10 +202,9 @@ const Main = () => {
 
     if (network.length == 0) {
         const inputLayer = new Layer(2);
-        const hiddenLayer1 = new Layer(3);
-        const hiddenLayer2 = new Layer(3);
+        const hiddenLayer1 = new Layer(2);
         const outputLayer = new Layer(2);
-        network.push(inputLayer, hiddenLayer1, hiddenLayer2, outputLayer);
+        network.push(inputLayer, hiddenLayer1, outputLayer);
         SaveNeuralNetwork(network);
     }
     InitaliseWeights(network);
@@ -214,18 +212,15 @@ const Main = () => {
 
     CANVAS.linkCanvas("canvas");
     VisualiseData(CANVAS, DATA);
-    VisualiseNeuralNetwork(CANVAS, network, 20);
+    //VisualiseNeuralNetwork(CANVAS, network, 20);
+    console.log("Cost: " + CalculateCost(network, DATA));
+
+    Learn(network, STEP_SIZE, DATA);
+    console.log("Cost: " + CalculateCost(network, DATA));
+
+    Learn(network, STEP_SIZE, DATA);
     console.log("Cost: " + CalculateCost(network, DATA));
     
-    console.log(network);
-
-    Learn(network, STEP_SIZE, DATA);
-    console.log("Cost: " + CalculateCost(network, DATA));
-    console.log(network);
-
-    Learn(network, STEP_SIZE, DATA);
-    console.log("Cost: " + CalculateCost(network, DATA));
-
 
     let miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE);
     let miniBatchCounter = 0;

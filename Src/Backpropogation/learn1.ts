@@ -1,7 +1,7 @@
 //https://dev.to/liashchynskyi/creating-of-neural-network-using-javascript-in-7minutes-o21
 //This doesn't work either...
 
-const Learn = (network: Layer[], stepSize: number, dataset: DataPoint[]) => {
+const Learn1 = (network: Layer[], stepSize: number, dataset: DataPoint[]) => {
     for (const data of dataset) {
         RunNetwork(network, [data.x, data.y]);
         const targetOutput = Number(data.result);

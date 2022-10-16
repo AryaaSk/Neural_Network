@@ -3,7 +3,7 @@ interface DataPoint {
     y: number;
     result: boolean;
 }
-const STEP_SIZE = 0.1; //when the cost starts to fluctuate, just reduce the STEP_SIZE
+const STEP_SIZE = 0.0001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const MINI_BATCH_SIZE = 30;
 
 let DATA: DataPoint[] = [];
@@ -34,11 +34,12 @@ class Neuron {
     }
 
     static ActivationFunction(num: number) {
-        return Sigmoid(num);
-        //return Math.tanh(num);
+        //return Sigmoid(num);
+        return Math.tanh(num);
     }
     static ActivationDerivative(num: number) {
-        return (1 - Sigmoid(num)) * Sigmoid(num);
+        //return (1 - Sigmoid(num)) * Sigmoid(num);
+        return 1 - (Math.tanh(num)**2)
     }
 }
 const Sigmoid = (num: number) => {
@@ -124,7 +125,7 @@ const LayerCalculateAverageCost = (layer: Layer, correctNeuronIndex: number) => 
         const neuron = layer.neurons[i];
         const difference = (i == correctNeuronIndex) ? 1 - neuron.value : 0 - neuron.value;
         const differenceSquared = difference**2;
-        totalCost += (0.5 * differenceSquared);
+        totalCost += differenceSquared;
     }
     const averageCost = totalCost / layer.neurons.length;
     return averageCost;
@@ -210,13 +211,17 @@ const Main = () => {
     console.log("Cost: " + CalculateCost(network, DATA));
 
 
+    //Learn2(network, STEP_SIZE, [DATA[10]]);
+    //console.log("BR");
+    //DecreaseCost(network, WEIGHTS, STEP_SIZE, [DATA[10]]);
+
     let [miniBatches, miniBatchCounter] = [CreateMiniBatches(DATA, MINI_BATCH_SIZE), 0];
     const interval1 = setInterval(() => {
         const miniBatch = miniBatches[miniBatchCounter % miniBatches.length];
 
         //DecreaseCost(network, WEIGHTS, STEP_SIZE, miniBatch);
         //DecreaseCost(network, BIASES, STEP_SIZE, miniBatch); //use same function but just replace weights with biases
-        Learn(network, STEP_SIZE, miniBatch);
+        Learn2(network, STEP_SIZE, miniBatch);
         console.log("Cost: " + CalculateCost(network, DATA));
 
         SaveWeights();

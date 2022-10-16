@@ -15,9 +15,10 @@ const RetrieveNeuralNetwork = (): Layer[] => {
 
     if (network.length == 0) {
         const inputLayer = new Layer(2);
-        const hiddenLayer1 = new Layer(2);
+        const hiddenLayer1 = new Layer(3);
+        const hiddenLayer2 = new Layer(3);
         const outputLayer = new Layer(2);
-        network.push(inputLayer, hiddenLayer1, outputLayer);
+        network.push(inputLayer, hiddenLayer1, hiddenLayer2, outputLayer);
         SaveNeuralNetwork(network);
     }
     InitaliseWeights(network);

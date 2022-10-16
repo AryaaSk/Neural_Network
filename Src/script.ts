@@ -3,7 +3,7 @@ interface DataPoint {
     y: number;
     result: boolean;
 }
-const STEP_SIZE = 0.001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
+const STEP_SIZE = 0.0001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const MINI_BATCH_SIZE = 30;
 
 let DATA: DataPoint[] = [];
@@ -34,10 +34,10 @@ class Neuron {
     }
 
     static ActivationFunction(num: number) {
-        return RELU(num);
+        return Sigmoid(num);
     }
     static ActivationDerivative(num: number) {
-        return REULDerivative(num);
+        return SigmoidDerivative(num);
     }
 }
 const Sigmoid = (num: number) => {
@@ -236,6 +236,8 @@ const Main = () => {
 
         miniBatchCounter += 1;
         if (miniBatchCounter % miniBatches.length == 0) {
+            //completed 1 epoch
+
             miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE); //create new mini batches to introduce new variety on every cycle
         }
     }, 16);
@@ -246,8 +248,8 @@ const Main = () => {
         VisualiseNeuralNetwork(CANVAS, network, 20);
     }, 1000);
 
-    //clearInterval(interval1);
-    //clearInterval(interval2);
+    clearInterval(interval1);
+    clearInterval(interval2);
 
     document.onkeydown = ($e) => {
         if ($e.key.toLowerCase() == " ") {

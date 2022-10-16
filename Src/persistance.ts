@@ -33,7 +33,7 @@ const RetrieveNeuralNetwork = (config: number[]): Layer[] => {
             layers.push(new Layer(layerLength));
         }
 
-        network = network.concat(layers);
+        network = layers;
         SaveNeuralNetwork(network);
 
         //will also have to clear any old weight and bias data since we have initialized a new network

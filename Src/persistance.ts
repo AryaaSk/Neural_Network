@@ -3,7 +3,7 @@ const SaveNeuralNetwork = (layers: Layer[]) => {
     const json = JSON.stringify(layers);
     localStorage.setItem("neuralNetwork", json);
 }
-const RetrieveNeuralNetwork = (): Layer[] => {
+const RetrieveNeuralNetwork = (config: number[]): Layer[] => {
     const json = localStorage.getItem("neuralNetwork");
     let network: Layer[] = [];
     if (json == null) {
@@ -13,13 +13,32 @@ const RetrieveNeuralNetwork = (): Layer[] => {
         network = JSON.parse(json);
     }
 
-    if (network.length == 0) {
-        const inputLayer = new Layer(2);
-        const hiddenLayer1 = new Layer(3);
-        const hiddenLayer2 = new Layer(3);
-        const outputLayer = new Layer(2);
-        network.push(inputLayer, hiddenLayer1, hiddenLayer2, outputLayer);
+    //check if network found in local storage matches config
+    let matchesConfig = true;
+    if (network.length != config.length) {
+        matchesConfig = false;
+    }
+    else {
+        for (const [i, layer] of network.entries()) {
+            if (layer.neurons.length != config[i]) {
+                matchesConfig = false;
+                break;
+            }
+        }
+    }
+
+    if (network.length == 0 || matchesConfig == false) {
+        const layers: Layer[] = [];
+        for (const layerLength of config) {
+            layers.push(new Layer(layerLength));
+        }
+
+        network = network.concat(layers);
         SaveNeuralNetwork(network);
+
+        //will also have to clear any old weight and bias data since we have initialized a new network
+        localStorage.removeItem("weightData");
+        localStorage.removeItem("biasData");
     }
     InitaliseWeights(network);
     InitialiseBiases(network);

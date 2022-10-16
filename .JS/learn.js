@@ -122,6 +122,9 @@ const Learn = (network: Layer[], stepSize: number, dataset: DataPoint[]) => {
         //Go through each weight in the last layer, calculate derivative of d[NC]/d[Weight], then just modify weight using gradient descent
         const activationDerivative = ActivationDerivative(neuron.rawValue);
         const ExpectedOutput = Number(data.result);
+
+        //NEED TO FIX EXPECTED OUTPUT (CURRENTLY WILL BE THE SAME FOR ALL NEURONS IN THE OUTPUT LAYER)
+
         const DerivativeCostWRTOutput = -2 * (ExpectedOutput - neuron.value);
 
         const nodeValue = activationDerivative * DerivativeCostWRTOutput; //set the node value for the specific neuron

@@ -3,7 +3,7 @@ interface DataPoint {
     y: number;
     result: boolean;
 }
-const STEP_SIZE = 0.0001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
+const STEP_SIZE = 0.1; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const MINI_BATCH_SIZE = 30;
 
 let DATA: DataPoint[] = [];
@@ -190,7 +190,7 @@ function shuffle(array: any[]) {
   
     return array;
 }
-const CreateMiniBatches = (dataset: DataPoint[], batchSize: number) => {
+const CreateMiniBatches = (dataset: any[], batchSize: number) => {
     const randomOrderDataset = JSON.parse(JSON.stringify(dataset));
     shuffle(randomOrderDataset); //shuffle before to make batches random
 
@@ -205,16 +205,12 @@ const CreateMiniBatches = (dataset: DataPoint[], batchSize: number) => {
 
 
 
-
-
-
-
 const Main = () => {
-    const network = RetrieveNeuralNetwork();
+    const network = RetrieveNeuralNetwork([2, 3, 3, 2]);
 
     CANVAS.linkCanvas("canvas");
     VisualiseData(CANVAS, DATA);
-    VisualiseNeuralNetwork(CANVAS, network, 20);
+    VisualiseNeuralNetwork(CANVAS, network, 30);
     console.log("Cost: " + CalculateCost(network, DATA));
 
 

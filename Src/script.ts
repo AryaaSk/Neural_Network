@@ -3,7 +3,7 @@ interface DataPoint {
     y: number;
     result: boolean;
 }
-const STEP_SIZE = 0.0001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
+const STEP_SIZE = 0.001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const MINI_BATCH_SIZE = 30;
 
 let DATA: DataPoint[] = [];
@@ -34,22 +34,29 @@ class Neuron {
     }
 
     static ActivationFunction(num: number) {
-        //return Sigmoid(num);
-        return Math.tanh(num);
+        return RELU(num);
     }
     static ActivationDerivative(num: number) {
-        //return (1 - Sigmoid(num)) * Sigmoid(num);
-        return 1 - (Math.tanh(num)**2)
+        return REULDerivative(num);
     }
 }
 const Sigmoid = (num: number) => {
     return 1 / (1 + Math.E**-num);
 }
+const SigmoidDerivative = (num: number) => {
+    return (1 - Sigmoid(num)) * Sigmoid(num);
+}
 const RELU = (num: number) => {
     return (num <= 0) ? 0 : num;
 }
+const REULDerivative = (num: number) => {
+    return (num <= 0) ? 0 : 1;
+}
 const HyperbolicTan = (num: number) => {
     return Math.tanh(num);
+}
+const HyperbolicTanDerivative = (num: number) => {
+    return 1 - (Math.tanh(num)**2)
 }
 
 class Layer {

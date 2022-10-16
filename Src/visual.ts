@@ -1,15 +1,14 @@
 const CANVAS = new Canvas();
 
-const AddNewPoints = (result: boolean, colour: string) => { //this function can just be called when I need more data points
+const AddNewPoints = (expectedOutputs: number[], colour: string) => { //this function can just be called when I need more data points
     const newData: DataPoint[] = [];
-    const Data = (x: number, y: number, result: boolean) => { return { x: x, y: y, result: result }; };
+    const Data = (inputs: number[], expectedOutputs: number[]) => { return { inputs: inputs, expectedOutputs: expectedOutputs }; };
 
     document.body.onclick = ($e) => {
         const screenPosition = { x: $e.clientX, y: $e.clientY };
         const gridPosition = { x: CANVAS.GridX(screenPosition.x), y: CANVAS.GridY(screenPosition.y) };
         CANVAS.plotPoint([gridPosition.x, gridPosition.y], colour);
-
-        newData.push(Data(gridPosition.x, gridPosition.y, result));
+        newData.push(Data([gridPosition.x, gridPosition.y], expectedOutputs));
     }
     document.onkeydown = () => {
         const json = JSON.stringify(newData);
@@ -19,11 +18,11 @@ const AddNewPoints = (result: boolean, colour: string) => { //this function can 
 
 const VisualiseData = (canvas: Canvas, data: DataPoint[]) => {
     for (const point of data) {
-        if (point.result == true) {
-            canvas.plotPoint([point.x, point.y], "blue");
+        if (point.expectedOutputs[1] == 1) { //true
+            canvas.plotPoint([point.inputs[0], point.inputs[1]], "blue");
         }
         else {
-            canvas.plotPoint([point.x, point.y], "red");
+            canvas.plotPoint([point.inputs[0], point.inputs[1]], "red");
         }
     }
 }

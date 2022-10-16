@@ -1,207 +1,15 @@
 interface DataPoint {
-    x: number;
-    y: number;
-    result: boolean;
-}
-const STEP_SIZE = 0.1; //when the cost starts to fluctuate, just reduce the STEP_SIZE
-const MINI_BATCH_SIZE = 30;
-
-let DATA: DataPoint[] = [];
-DATA = DATA.concat(JSON.parse('[{"x":-120,"y":203.5,"result":true},{"x":-208,"y":126.5,"result":true},{"x":-215,"y":41.5,"result":true},{"x":-173,"y":-65.5,"result":true},{"x":-73,"y":-113.5,"result":true},{"x":42,"y":-122.5,"result":true},{"x":144,"y":-118.5,"result":true},{"x":214,"y":-74.5,"result":true},{"x":242,"y":-1.5,"result":true},{"x":237,"y":86.5,"result":true},{"x":195,"y":150.5,"result":true},{"x":107,"y":183.5,"result":true},{"x":-2,"y":202.5,"result":true},{"x":-56,"y":161.5,"result":true},{"x":-125,"y":120.5,"result":true},{"x":-144,"y":61.5,"result":true},{"x":-96,"y":-8.5,"result":true},{"x":-5,"y":-47.5,"result":true},{"x":123,"y":-49.5,"result":true},{"x":172,"y":3.5,"result":true},{"x":138,"y":67.5,"result":true},{"x":59,"y":12.5,"result":true},{"x":-11,"y":40.5,"result":true},{"x":-87,"y":85.5,"result":true},{"x":2,"y":116.5,"result":true},{"x":-14,"y":85.5,"result":true},{"x":76,"y":61.5,"result":true},{"x":109,"y":105.5,"result":true},{"x":51,"y":129.5,"result":true},{"x":5,"y":164.5,"result":true},{"x":-59,"y":36.5,"result":true},{"x":-165,"y":-2.5,"result":true},{"x":-79,"y":-58.5,"result":true},{"x":82,"y":-86.5,"result":true},{"x":-35,"y":-1.5,"result":true},{"x":27,"y":49.5,"result":true},{"x":-132,"y":32.5,"result":true},{"x":-133,"y":143.5,"result":true},{"x":-69,"y":124.5,"result":true},{"x":-111,"y":-29.5,"result":true},{"x":-133,"y":109.5,"result":true},{"x":-198,"y":59.5,"result":true},{"x":-153,"y":-40.5,"result":true},{"x":-91,"y":-111.5,"result":true},{"x":72,"y":-128.5,"result":true},{"x":188,"y":-35.5,"result":true},{"x":181,"y":119.5,"result":true},{"x":110,"y":46.5,"result":true},{"x":-54,"y":-89.5,"result":true},{"x":62,"y":-57.5,"result":true},{"x":19,"y":-65.5,"result":true},{"x":59,"y":-19.5,"result":true},{"x":74,"y":131.5,"result":true},{"x":64,"y":111.5,"result":true},{"x":25,"y":27.5,"result":true},{"x":47,"y":158.5,"result":true},{"x":11,"y":184.5,"result":true},{"x":-73,"y":186.5,"result":true},{"x":-132,"y":88.5,"result":true},{"x":-120,"y":-31.5,"result":true},{"x":-39,"y":155.5,"result":true},{"x":-78,"y":27.5,"result":true},{"x":-61,"y":138.5,"result":true},{"x":-182,"y":30.5,"result":true},{"x":-201,"y":63.5,"result":true},{"x":-240,"y":44.5,"result":true},{"x":-204,"y":-75.5,"result":true},{"x":-178,"y":-97.5,"result":true},{"x":-182,"y":-67.5,"result":true},{"x":-52,"y":-131.5,"result":true},{"x":-9,"y":-135.5,"result":true},{"x":77,"y":-105.5,"result":true},{"x":138,"y":62.5,"result":true},{"x":177,"y":-9.5,"result":true},{"x":114,"y":156.5,"result":true},{"x":105,"y":92.5,"result":true},{"x":33,"y":160.5,"result":true},{"x":-42,"y":98.5,"result":true},{"x":-80,"y":30.5,"result":true},{"x":-87,"y":109.5,"result":true},{"x":-84,"y":185.5,"result":true},{"x":-143,"y":110.5,"result":true},{"x":-135,"y":144.5,"result":true},{"x":-124,"y":102.5,"result":true},{"x":-175,"y":71.5,"result":true},{"x":-175,"y":-9.5,"result":true},{"x":-37,"y":-67.5,"result":true},{"x":-36,"y":32.5,"result":true},{"x":-3,"y":-4.5,"result":true},{"x":84,"y":-7.5,"result":true},{"x":96,"y":-3.5,"result":true},{"x":97,"y":-9.5,"result":true},{"x":122,"y":-9.5,"result":true},{"x":100,"y":-0.5,"result":true},{"x":104,"y":-12.5,"result":true},{"x":7,"y":52.5,"result":true},{"x":56,"y":60.5,"result":true},{"x":83,"y":-53.5,"result":true},{"x":-6,"y":106.5,"result":true},{"x":51,"y":12.5,"result":true},{"x":19,"y":-27.5,"result":true},{"x":41,"y":81.5,"result":true},{"x":24,"y":-36.5,"result":true}]'));
-DATA = DATA.concat(JSON.parse('[{"x":-272,"y":-62.5,"result":false},{"x":-185,"y":-139.5,"result":false},{"x":-15,"y":-184.5,"result":false},{"x":195,"y":-182.5,"result":false},{"x":101,"y":-179.5,"result":false},{"x":268,"y":-128.5,"result":false},{"x":305,"y":-66.5,"result":false},{"x":319,"y":15.5,"result":false},{"x":324,"y":115.5,"result":false},{"x":278,"y":181.5,"result":false},{"x":153,"y":229.5,"result":false},{"x":79,"y":241.5,"result":false},{"x":-81,"y":254.5,"result":false},{"x":-185,"y":243.5,"result":false},{"x":-203,"y":183.5,"result":false},{"x":-260,"y":125.5,"result":false},{"x":-274,"y":37.5,"result":false},{"x":-285,"y":-24.5,"result":false},{"x":-426,"y":-75.5,"result":false},{"x":-356,"y":-170.5,"result":false},{"x":-352,"y":-94.5,"result":false},{"x":-400,"y":45.5,"result":false},{"x":-349,"y":66.5,"result":false},{"x":-487,"y":168.5,"result":false},{"x":-496,"y":356.5,"result":false},{"x":-465,"y":457.5,"result":false},{"x":-364,"y":455.5,"result":false},{"x":-174,"y":448.5,"result":false},{"x":17,"y":438.5,"result":false},{"x":202,"y":434.5,"result":false},{"x":339,"y":435.5,"result":false},{"x":422,"y":424.5,"result":false},{"x":478,"y":320.5,"result":false},{"x":463,"y":119.5,"result":false},{"x":453,"y":221.5,"result":false},{"x":456,"y":-3.5,"result":false},{"x":460,"y":-91.5,"result":false},{"x":472,"y":-179.5,"result":false},{"x":480,"y":-306.5,"result":false},{"x":469,"y":-410.5,"result":false},{"x":462,"y":-506.5,"result":false},{"x":368,"y":-512.5,"result":false},{"x":198,"y":-511.5,"result":false},{"x":31,"y":-500.5,"result":false},{"x":284,"y":-516.5,"result":false},{"x":-74,"y":-504.5,"result":false},{"x":-160,"y":-503.5,"result":false},{"x":-300,"y":-500.5,"result":false},{"x":-380,"y":-508.5,"result":false},{"x":-453,"y":-509.5,"result":false},{"x":-488,"y":-472.5,"result":false},{"x":-480,"y":-392.5,"result":false},{"x":-479,"y":-283.5,"result":false},{"x":-474,"y":-115.5,"result":false},{"x":-480,"y":73.5,"result":false},{"x":-396,"y":202.5,"result":false},{"x":-271,"y":251.5,"result":false},{"x":-386,"y":297.5,"result":false},{"x":-370,"y":397.5,"result":false},{"x":-251,"y":357.5,"result":false},{"x":-87,"y":326.5,"result":false},{"x":-93,"y":377.5,"result":false},{"x":81,"y":331.5,"result":false},{"x":4,"y":326.5,"result":false},{"x":314,"y":323.5,"result":false},{"x":207,"y":283.5,"result":false},{"x":392,"y":365.5,"result":false},{"x":362,"y":240.5,"result":false},{"x":403,"y":99.5,"result":false},{"x":402,"y":-80.5,"result":false},{"x":330,"y":-151.5,"result":false},{"x":430,"y":-233.5,"result":false},{"x":198,"y":-282.5,"result":false},{"x":89,"y":-307.5,"result":false},{"x":351,"y":-356.5,"result":false},{"x":333,"y":-243.5,"result":false},{"x":195,"y":-388.5,"result":false},{"x":397,"y":-454.5,"result":false},{"x":292,"y":-407.5,"result":false},{"x":-271,"y":-220.5,"result":false},{"x":-407,"y":-269.5,"result":false},{"x":-408,"y":-342.5,"result":false},{"x":-296,"y":-335.5,"result":false},{"x":-144,"y":-269.5,"result":false},{"x":-37,"y":-352.5,"result":false},{"x":-6,"y":-262.5,"result":false},{"x":-175,"y":-382.5,"result":false},{"x":-317,"y":-414.5,"result":false},{"x":-424,"y":-442.5,"result":false},{"x":-178,"y":-450.5,"result":false},{"x":-35,"y":-442.5,"result":false},{"x":128,"y":-436.5,"result":false},{"x":62,"y":-385.5,"result":false},{"x":-96,"y":-205.5,"result":false},{"x":-287,"y":184.5,"result":false},{"x":200,"y":371.5,"result":false}]'));
-DATA = DATA.concat(JSON.parse('[{"x":374.5,"y":301.5,"result":false},{"x":333.5,"y":369.5,"result":false},{"x":215.5,"y":365.5,"result":false},{"x":263.5,"y":297.5,"result":false},{"x":91.5,"y":401.5,"result":false},{"x":-148.5,"y":409.5,"result":false},{"x":-251.5,"y":405.5,"result":false},{"x":-326.5,"y":346.5,"result":false},{"x":-464.5,"y":248.5,"result":false},{"x":-325.5,"y":268.5,"result":false},{"x":-430.5,"y":126.5,"result":false},{"x":-480.5,"y":-44.5,"result":false},{"x":-353.5,"y":-47.5,"result":false},{"x":-443.5,"y":-189.5,"result":false},{"x":-275.5,"y":-292.5,"result":false},{"x":-365.5,"y":-256.5,"result":false},{"x":-382.5,"y":-380.5,"result":false},{"x":-245.5,"y":-342.5,"result":false},{"x":-239.5,"y":-432.5,"result":false},{"x":-32.5,"y":-417.5,"result":false},{"x":-123.5,"y":-306.5,"result":false},{"x":151.5,"y":-354.5,"result":false},{"x":131.5,"y":-249.5,"result":false},{"x":305.5,"y":-344.5,"result":false},{"x":258.5,"y":-220.5,"result":false},{"x":421.5,"y":-174.5,"result":false},{"x":440.5,"y":-370.5,"result":false},{"x":339.5,"y":-441.5,"result":false},{"x":154.5,"y":-489.5,"result":false},{"x":257.5,"y":-488.5,"result":false},{"x":-242.5,"y":-471.5,"result":false},{"x":381.5,"y":42.5,"result":false},{"x":388.5,"y":171.5,"result":false},{"x":286.5,"y":224.5,"result":false},{"x":210.5,"y":212.5,"result":false},{"x":130.5,"y":294.5,"result":false},{"x":0.5,"y":377.5,"result":false},{"x":-160.5,"y":342.5,"result":false},{"x":-352.5,"y":130.5,"result":false},{"x":52.5,"y":-239.5,"result":false},{"x":41.5,"y":-315.5,"result":false},{"x":-63.5,"y":-235.5,"result":false},{"x":-349.5,"y":-472.5,"result":false},{"x":397.5,"y":-30.5,"result":false},{"x":197.5,"y":-142.5,"result":false},{"x":-187.5,"y":-218.5,"result":false},{"x":-221.5,"y":300.5,"result":false},{"x":78.5,"y":283.5,"result":false},{"x":387.5,"y":-287.5,"result":false},{"x":-433.5,"y":407.5,"result":false}]'));
-DATA = DATA.concat(JSON.parse('[{"x":-210.5,"y":-42.5,"result":true},{"x":-234.5,"y":-102.5,"result":true},{"x":-135.5,"y":-117.5,"result":true},{"x":-105.5,"y":-69.5,"result":true},{"x":-56.5,"y":-21.5,"result":true},{"x":10.5,"y":-102.5,"result":true},{"x":160.5,"y":-78.5,"result":true},{"x":128.5,"y":17.5,"result":true},{"x":-45.5,"y":194.5,"result":true},{"x":-100.5,"y":141.5,"result":true},{"x":57.5,"y":179.5,"result":true},{"x":-24.5,"y":227.5,"result":true},{"x":-82.5,"y":225.5,"result":true},{"x":194.5,"y":33.5,"result":true},{"x":174.5,"y":96.5,"result":true},{"x":200.5,"y":66.5,"result":true},{"x":212.5,"y":-53.5,"result":true},{"x":-64.5,"y":62.5,"result":true},{"x":-111.5,"y":54.5,"result":true},{"x":-26.5,"y":144.5,"result":true},{"x":57.5,"y":96.5,"result":true},{"x":-104.5,"y":-146.5,"result":true},{"x":-143.5,"y":-75.5,"result":true},{"x":-139.5,"y":-14.5,"result":true},{"x":-149.5,"y":102.5,"result":true},{"x":-240.5,"y":-133.5,"result":true},{"x":-267.5,"y":-176.5,"result":true},{"x":271.5,"y":-37.5,"result":true},{"x":229.5,"y":51.5,"result":true},{"x":61.5,"y":200.5,"result":true},{"x":-26.5,"y":252.5,"result":true},{"x":-139.5,"y":170.5,"result":true},{"x":42.5,"y":209.5,"result":true},{"x":-64.5,"y":286.5,"result":true},{"x":-211.5,"y":1.5,"result":true},{"x":243.5,"y":-89.5,"result":true},{"x":210.5,"y":-9.5,"result":true},{"x":122.5,"y":123.5,"result":true},{"x":-214.5,"y":-165.5,"result":true},{"x":-174.5,"y":117.5,"result":true},{"x":-121.5,"y":249.5,"result":true},{"x":16.5,"y":237.5,"result":true}]'));
-//similar number of true and false points
-
-
-
-const RandomID = () => {
-    return String(Math.floor(Math.random() * (99999999999999 - 10000000000000 + 1) + 10000000000000));
+    inputs: number[];
+    expectedOutputs: number[];
 }
 
-class Neuron {
-    id: string = ""
-    rawValue: number = 0;
-    value: number = 0;
-    //layer is set implicitly  
-    //bias stored in separate dictionary
+let DATA: DataPoint[] = JSON.parse('[{"inputs":[-120,203.5],"expectedOutputs":[0,1]},{"inputs":[-208,126.5],"expectedOutputs":[0,1]},{"inputs":[-215,41.5],"expectedOutputs":[0,1]},{"inputs":[-173,-65.5],"expectedOutputs":[0,1]},{"inputs":[-73,-113.5],"expectedOutputs":[0,1]},{"inputs":[42,-122.5],"expectedOutputs":[0,1]},{"inputs":[144,-118.5],"expectedOutputs":[0,1]},{"inputs":[214,-74.5],"expectedOutputs":[0,1]},{"inputs":[242,-1.5],"expectedOutputs":[0,1]},{"inputs":[237,86.5],"expectedOutputs":[0,1]},{"inputs":[195,150.5],"expectedOutputs":[0,1]},{"inputs":[107,183.5],"expectedOutputs":[0,1]},{"inputs":[-2,202.5],"expectedOutputs":[0,1]},{"inputs":[-56,161.5],"expectedOutputs":[0,1]},{"inputs":[-125,120.5],"expectedOutputs":[0,1]},{"inputs":[-144,61.5],"expectedOutputs":[0,1]},{"inputs":[-96,-8.5],"expectedOutputs":[0,1]},{"inputs":[-5,-47.5],"expectedOutputs":[0,1]},{"inputs":[123,-49.5],"expectedOutputs":[0,1]},{"inputs":[172,3.5],"expectedOutputs":[0,1]},{"inputs":[138,67.5],"expectedOutputs":[0,1]},{"inputs":[59,12.5],"expectedOutputs":[0,1]},{"inputs":[-11,40.5],"expectedOutputs":[0,1]},{"inputs":[-87,85.5],"expectedOutputs":[0,1]},{"inputs":[2,116.5],"expectedOutputs":[0,1]},{"inputs":[-14,85.5],"expectedOutputs":[0,1]},{"inputs":[76,61.5],"expectedOutputs":[0,1]},{"inputs":[109,105.5],"expectedOutputs":[0,1]},{"inputs":[51,129.5],"expectedOutputs":[0,1]},{"inputs":[5,164.5],"expectedOutputs":[0,1]},{"inputs":[-59,36.5],"expectedOutputs":[0,1]},{"inputs":[-165,-2.5],"expectedOutputs":[0,1]},{"inputs":[-79,-58.5],"expectedOutputs":[0,1]},{"inputs":[82,-86.5],"expectedOutputs":[0,1]},{"inputs":[-35,-1.5],"expectedOutputs":[0,1]},{"inputs":[27,49.5],"expectedOutputs":[0,1]},{"inputs":[-132,32.5],"expectedOutputs":[0,1]},{"inputs":[-133,143.5],"expectedOutputs":[0,1]},{"inputs":[-69,124.5],"expectedOutputs":[0,1]},{"inputs":[-111,-29.5],"expectedOutputs":[0,1]},{"inputs":[-133,109.5],"expectedOutputs":[0,1]},{"inputs":[-198,59.5],"expectedOutputs":[0,1]},{"inputs":[-153,-40.5],"expectedOutputs":[0,1]},{"inputs":[-91,-111.5],"expectedOutputs":[0,1]},{"inputs":[72,-128.5],"expectedOutputs":[0,1]},{"inputs":[188,-35.5],"expectedOutputs":[0,1]},{"inputs":[181,119.5],"expectedOutputs":[0,1]},{"inputs":[110,46.5],"expectedOutputs":[0,1]},{"inputs":[-54,-89.5],"expectedOutputs":[0,1]},{"inputs":[62,-57.5],"expectedOutputs":[0,1]},{"inputs":[19,-65.5],"expectedOutputs":[0,1]},{"inputs":[59,-19.5],"expectedOutputs":[0,1]},{"inputs":[74,131.5],"expectedOutputs":[0,1]},{"inputs":[64,111.5],"expectedOutputs":[0,1]},{"inputs":[25,27.5],"expectedOutputs":[0,1]},{"inputs":[47,158.5],"expectedOutputs":[0,1]},{"inputs":[11,184.5],"expectedOutputs":[0,1]},{"inputs":[-73,186.5],"expectedOutputs":[0,1]},{"inputs":[-132,88.5],"expectedOutputs":[0,1]},{"inputs":[-120,-31.5],"expectedOutputs":[0,1]},{"inputs":[-39,155.5],"expectedOutputs":[0,1]},{"inputs":[-78,27.5],"expectedOutputs":[0,1]},{"inputs":[-61,138.5],"expectedOutputs":[0,1]},{"inputs":[-182,30.5],"expectedOutputs":[0,1]},{"inputs":[-201,63.5],"expectedOutputs":[0,1]},{"inputs":[-240,44.5],"expectedOutputs":[0,1]},{"inputs":[-204,-75.5],"expectedOutputs":[0,1]},{"inputs":[-178,-97.5],"expectedOutputs":[0,1]},{"inputs":[-182,-67.5],"expectedOutputs":[0,1]},{"inputs":[-52,-131.5],"expectedOutputs":[0,1]},{"inputs":[-9,-135.5],"expectedOutputs":[0,1]},{"inputs":[77,-105.5],"expectedOutputs":[0,1]},{"inputs":[138,62.5],"expectedOutputs":[0,1]},{"inputs":[177,-9.5],"expectedOutputs":[0,1]},{"inputs":[114,156.5],"expectedOutputs":[0,1]},{"inputs":[105,92.5],"expectedOutputs":[0,1]},{"inputs":[33,160.5],"expectedOutputs":[0,1]},{"inputs":[-42,98.5],"expectedOutputs":[0,1]},{"inputs":[-80,30.5],"expectedOutputs":[0,1]},{"inputs":[-87,109.5],"expectedOutputs":[0,1]},{"inputs":[-84,185.5],"expectedOutputs":[0,1]},{"inputs":[-143,110.5],"expectedOutputs":[0,1]},{"inputs":[-135,144.5],"expectedOutputs":[0,1]},{"inputs":[-124,102.5],"expectedOutputs":[0,1]},{"inputs":[-175,71.5],"expectedOutputs":[0,1]},{"inputs":[-175,-9.5],"expectedOutputs":[0,1]},{"inputs":[-37,-67.5],"expectedOutputs":[0,1]},{"inputs":[-36,32.5],"expectedOutputs":[0,1]},{"inputs":[-3,-4.5],"expectedOutputs":[0,1]},{"inputs":[84,-7.5],"expectedOutputs":[0,1]},{"inputs":[96,-3.5],"expectedOutputs":[0,1]},{"inputs":[97,-9.5],"expectedOutputs":[0,1]},{"inputs":[122,-9.5],"expectedOutputs":[0,1]},{"inputs":[100,-0.5],"expectedOutputs":[0,1]},{"inputs":[104,-12.5],"expectedOutputs":[0,1]},{"inputs":[7,52.5],"expectedOutputs":[0,1]},{"inputs":[56,60.5],"expectedOutputs":[0,1]},{"inputs":[83,-53.5],"expectedOutputs":[0,1]},{"inputs":[-6,106.5],"expectedOutputs":[0,1]},{"inputs":[51,12.5],"expectedOutputs":[0,1]},{"inputs":[19,-27.5],"expectedOutputs":[0,1]},{"inputs":[41,81.5],"expectedOutputs":[0,1]},{"inputs":[24,-36.5],"expectedOutputs":[0,1]},{"inputs":[-272,-62.5],"expectedOutputs":[1,0]},{"inputs":[-185,-139.5],"expectedOutputs":[1,0]},{"inputs":[-15,-184.5],"expectedOutputs":[1,0]},{"inputs":[195,-182.5],"expectedOutputs":[1,0]},{"inputs":[101,-179.5],"expectedOutputs":[1,0]},{"inputs":[268,-128.5],"expectedOutputs":[1,0]},{"inputs":[305,-66.5],"expectedOutputs":[1,0]},{"inputs":[319,15.5],"expectedOutputs":[1,0]},{"inputs":[324,115.5],"expectedOutputs":[1,0]},{"inputs":[278,181.5],"expectedOutputs":[1,0]},{"inputs":[153,229.5],"expectedOutputs":[1,0]},{"inputs":[79,241.5],"expectedOutputs":[1,0]},{"inputs":[-81,254.5],"expectedOutputs":[1,0]},{"inputs":[-185,243.5],"expectedOutputs":[1,0]},{"inputs":[-203,183.5],"expectedOutputs":[1,0]},{"inputs":[-260,125.5],"expectedOutputs":[1,0]},{"inputs":[-274,37.5],"expectedOutputs":[1,0]},{"inputs":[-285,-24.5],"expectedOutputs":[1,0]},{"inputs":[-426,-75.5],"expectedOutputs":[1,0]},{"inputs":[-356,-170.5],"expectedOutputs":[1,0]},{"inputs":[-352,-94.5],"expectedOutputs":[1,0]},{"inputs":[-400,45.5],"expectedOutputs":[1,0]},{"inputs":[-349,66.5],"expectedOutputs":[1,0]},{"inputs":[-487,168.5],"expectedOutputs":[1,0]},{"inputs":[-496,356.5],"expectedOutputs":[1,0]},{"inputs":[-465,457.5],"expectedOutputs":[1,0]},{"inputs":[-364,455.5],"expectedOutputs":[1,0]},{"inputs":[-174,448.5],"expectedOutputs":[1,0]},{"inputs":[17,438.5],"expectedOutputs":[1,0]},{"inputs":[202,434.5],"expectedOutputs":[1,0]},{"inputs":[339,435.5],"expectedOutputs":[1,0]},{"inputs":[422,424.5],"expectedOutputs":[1,0]},{"inputs":[478,320.5],"expectedOutputs":[1,0]},{"inputs":[463,119.5],"expectedOutputs":[1,0]},{"inputs":[453,221.5],"expectedOutputs":[1,0]},{"inputs":[456,-3.5],"expectedOutputs":[1,0]},{"inputs":[460,-91.5],"expectedOutputs":[1,0]},{"inputs":[472,-179.5],"expectedOutputs":[1,0]},{"inputs":[480,-306.5],"expectedOutputs":[1,0]},{"inputs":[469,-410.5],"expectedOutputs":[1,0]},{"inputs":[462,-506.5],"expectedOutputs":[1,0]},{"inputs":[368,-512.5],"expectedOutputs":[1,0]},{"inputs":[198,-511.5],"expectedOutputs":[1,0]},{"inputs":[31,-500.5],"expectedOutputs":[1,0]},{"inputs":[284,-516.5],"expectedOutputs":[1,0]},{"inputs":[-74,-504.5],"expectedOutputs":[1,0]},{"inputs":[-160,-503.5],"expectedOutputs":[1,0]},{"inputs":[-300,-500.5],"expectedOutputs":[1,0]},{"inputs":[-380,-508.5],"expectedOutputs":[1,0]},{"inputs":[-453,-509.5],"expectedOutputs":[1,0]},{"inputs":[-488,-472.5],"expectedOutputs":[1,0]},{"inputs":[-480,-392.5],"expectedOutputs":[1,0]},{"inputs":[-479,-283.5],"expectedOutputs":[1,0]},{"inputs":[-474,-115.5],"expectedOutputs":[1,0]},{"inputs":[-480,73.5],"expectedOutputs":[1,0]},{"inputs":[-396,202.5],"expectedOutputs":[1,0]},{"inputs":[-271,251.5],"expectedOutputs":[1,0]},{"inputs":[-386,297.5],"expectedOutputs":[1,0]},{"inputs":[-370,397.5],"expectedOutputs":[1,0]},{"inputs":[-251,357.5],"expectedOutputs":[1,0]},{"inputs":[-87,326.5],"expectedOutputs":[1,0]},{"inputs":[-93,377.5],"expectedOutputs":[1,0]},{"inputs":[81,331.5],"expectedOutputs":[1,0]},{"inputs":[4,326.5],"expectedOutputs":[1,0]},{"inputs":[314,323.5],"expectedOutputs":[1,0]},{"inputs":[207,283.5],"expectedOutputs":[1,0]},{"inputs":[392,365.5],"expectedOutputs":[1,0]},{"inputs":[362,240.5],"expectedOutputs":[1,0]},{"inputs":[403,99.5],"expectedOutputs":[1,0]},{"inputs":[402,-80.5],"expectedOutputs":[1,0]},{"inputs":[330,-151.5],"expectedOutputs":[1,0]},{"inputs":[430,-233.5],"expectedOutputs":[1,0]},{"inputs":[198,-282.5],"expectedOutputs":[1,0]},{"inputs":[89,-307.5],"expectedOutputs":[1,0]},{"inputs":[351,-356.5],"expectedOutputs":[1,0]},{"inputs":[333,-243.5],"expectedOutputs":[1,0]},{"inputs":[195,-388.5],"expectedOutputs":[1,0]},{"inputs":[397,-454.5],"expectedOutputs":[1,0]},{"inputs":[292,-407.5],"expectedOutputs":[1,0]},{"inputs":[-271,-220.5],"expectedOutputs":[1,0]},{"inputs":[-407,-269.5],"expectedOutputs":[1,0]},{"inputs":[-408,-342.5],"expectedOutputs":[1,0]},{"inputs":[-296,-335.5],"expectedOutputs":[1,0]},{"inputs":[-144,-269.5],"expectedOutputs":[1,0]},{"inputs":[-37,-352.5],"expectedOutputs":[1,0]},{"inputs":[-6,-262.5],"expectedOutputs":[1,0]},{"inputs":[-175,-382.5],"expectedOutputs":[1,0]},{"inputs":[-317,-414.5],"expectedOutputs":[1,0]},{"inputs":[-424,-442.5],"expectedOutputs":[1,0]},{"inputs":[-178,-450.5],"expectedOutputs":[1,0]},{"inputs":[-35,-442.5],"expectedOutputs":[1,0]},{"inputs":[128,-436.5],"expectedOutputs":[1,0]},{"inputs":[62,-385.5],"expectedOutputs":[1,0]},{"inputs":[-96,-205.5],"expectedOutputs":[1,0]},{"inputs":[-287,184.5],"expectedOutputs":[1,0]},{"inputs":[200,371.5],"expectedOutputs":[1,0]},{"inputs":[374.5,301.5],"expectedOutputs":[1,0]},{"inputs":[333.5,369.5],"expectedOutputs":[1,0]},{"inputs":[215.5,365.5],"expectedOutputs":[1,0]},{"inputs":[263.5,297.5],"expectedOutputs":[1,0]},{"inputs":[91.5,401.5],"expectedOutputs":[1,0]},{"inputs":[-148.5,409.5],"expectedOutputs":[1,0]},{"inputs":[-251.5,405.5],"expectedOutputs":[1,0]},{"inputs":[-326.5,346.5],"expectedOutputs":[1,0]},{"inputs":[-464.5,248.5],"expectedOutputs":[1,0]},{"inputs":[-325.5,268.5],"expectedOutputs":[1,0]},{"inputs":[-430.5,126.5],"expectedOutputs":[1,0]},{"inputs":[-480.5,-44.5],"expectedOutputs":[1,0]},{"inputs":[-353.5,-47.5],"expectedOutputs":[1,0]},{"inputs":[-443.5,-189.5],"expectedOutputs":[1,0]},{"inputs":[-275.5,-292.5],"expectedOutputs":[1,0]},{"inputs":[-365.5,-256.5],"expectedOutputs":[1,0]},{"inputs":[-382.5,-380.5],"expectedOutputs":[1,0]},{"inputs":[-245.5,-342.5],"expectedOutputs":[1,0]},{"inputs":[-239.5,-432.5],"expectedOutputs":[1,0]},{"inputs":[-32.5,-417.5],"expectedOutputs":[1,0]},{"inputs":[-123.5,-306.5],"expectedOutputs":[1,0]},{"inputs":[151.5,-354.5],"expectedOutputs":[1,0]},{"inputs":[131.5,-249.5],"expectedOutputs":[1,0]},{"inputs":[305.5,-344.5],"expectedOutputs":[1,0]},{"inputs":[258.5,-220.5],"expectedOutputs":[1,0]},{"inputs":[421.5,-174.5],"expectedOutputs":[1,0]},{"inputs":[440.5,-370.5],"expectedOutputs":[1,0]},{"inputs":[339.5,-441.5],"expectedOutputs":[1,0]},{"inputs":[154.5,-489.5],"expectedOutputs":[1,0]},{"inputs":[257.5,-488.5],"expectedOutputs":[1,0]},{"inputs":[-242.5,-471.5],"expectedOutputs":[1,0]},{"inputs":[381.5,42.5],"expectedOutputs":[1,0]},{"inputs":[388.5,171.5],"expectedOutputs":[1,0]},{"inputs":[286.5,224.5],"expectedOutputs":[1,0]},{"inputs":[210.5,212.5],"expectedOutputs":[1,0]},{"inputs":[130.5,294.5],"expectedOutputs":[1,0]},{"inputs":[0.5,377.5],"expectedOutputs":[1,0]},{"inputs":[-160.5,342.5],"expectedOutputs":[1,0]},{"inputs":[-352.5,130.5],"expectedOutputs":[1,0]},{"inputs":[52.5,-239.5],"expectedOutputs":[1,0]},{"inputs":[41.5,-315.5],"expectedOutputs":[1,0]},{"inputs":[-63.5,-235.5],"expectedOutputs":[1,0]},{"inputs":[-349.5,-472.5],"expectedOutputs":[1,0]},{"inputs":[397.5,-30.5],"expectedOutputs":[1,0]},{"inputs":[197.5,-142.5],"expectedOutputs":[1,0]},{"inputs":[-187.5,-218.5],"expectedOutputs":[1,0]},{"inputs":[-221.5,300.5],"expectedOutputs":[1,0]},{"inputs":[78.5,283.5],"expectedOutputs":[1,0]},{"inputs":[387.5,-287.5],"expectedOutputs":[1,0]},{"inputs":[-433.5,407.5],"expectedOutputs":[1,0]},{"inputs":[-210.5,-42.5],"expectedOutputs":[0,1]},{"inputs":[-234.5,-102.5],"expectedOutputs":[0,1]},{"inputs":[-135.5,-117.5],"expectedOutputs":[0,1]},{"inputs":[-105.5,-69.5],"expectedOutputs":[0,1]},{"inputs":[-56.5,-21.5],"expectedOutputs":[0,1]},{"inputs":[10.5,-102.5],"expectedOutputs":[0,1]},{"inputs":[160.5,-78.5],"expectedOutputs":[0,1]},{"inputs":[128.5,17.5],"expectedOutputs":[0,1]},{"inputs":[-45.5,194.5],"expectedOutputs":[0,1]},{"inputs":[-100.5,141.5],"expectedOutputs":[0,1]},{"inputs":[57.5,179.5],"expectedOutputs":[0,1]},{"inputs":[-24.5,227.5],"expectedOutputs":[0,1]},{"inputs":[-82.5,225.5],"expectedOutputs":[0,1]},{"inputs":[194.5,33.5],"expectedOutputs":[0,1]},{"inputs":[174.5,96.5],"expectedOutputs":[0,1]},{"inputs":[200.5,66.5],"expectedOutputs":[0,1]},{"inputs":[212.5,-53.5],"expectedOutputs":[0,1]},{"inputs":[-64.5,62.5],"expectedOutputs":[0,1]},{"inputs":[-111.5,54.5],"expectedOutputs":[0,1]},{"inputs":[-26.5,144.5],"expectedOutputs":[0,1]},{"inputs":[57.5,96.5],"expectedOutputs":[0,1]},{"inputs":[-104.5,-146.5],"expectedOutputs":[0,1]},{"inputs":[-143.5,-75.5],"expectedOutputs":[0,1]},{"inputs":[-139.5,-14.5],"expectedOutputs":[0,1]},{"inputs":[-149.5,102.5],"expectedOutputs":[0,1]},{"inputs":[-240.5,-133.5],"expectedOutputs":[0,1]},{"inputs":[-267.5,-176.5],"expectedOutputs":[0,1]},{"inputs":[271.5,-37.5],"expectedOutputs":[0,1]},{"inputs":[229.5,51.5],"expectedOutputs":[0,1]},{"inputs":[61.5,200.5],"expectedOutputs":[0,1]},{"inputs":[-26.5,252.5],"expectedOutputs":[0,1]},{"inputs":[-139.5,170.5],"expectedOutputs":[0,1]},{"inputs":[42.5,209.5],"expectedOutputs":[0,1]},{"inputs":[-64.5,286.5],"expectedOutputs":[0,1]},{"inputs":[-211.5,1.5],"expectedOutputs":[0,1]},{"inputs":[243.5,-89.5],"expectedOutputs":[0,1]},{"inputs":[210.5,-9.5],"expectedOutputs":[0,1]},{"inputs":[122.5,123.5],"expectedOutputs":[0,1]},{"inputs":[-214.5,-165.5],"expectedOutputs":[0,1]},{"inputs":[-174.5,117.5],"expectedOutputs":[0,1]},{"inputs":[-121.5,249.5],"expectedOutputs":[0,1]},{"inputs":[16.5,237.5],"expectedOutputs":[0,1]}]');
 
-    constructor(value?: number) {
-        this.id = RandomID();
-        if (value != undefined) {
-            this.value = value;
-        }
-    }
-
-    static ActivationFunction(num: number) {
-        return Sigmoid(num);
-    }
-    static ActivationDerivative(num: number) {
-        return SigmoidDerivative(num);
-    }
-}
-const Sigmoid = (num: number) => {
-    return 1 / (1 + Math.E**-num);
-}
-const SigmoidDerivative = (num: number) => {
-    return (1 - Sigmoid(num)) * Sigmoid(num);
-}
-const RELU = (num: number) => {
-    return (num <= 0) ? 0 : num;
-}
-const REULDerivative = (num: number) => {
-    return (num <= 0) ? 0 : 1;
-}
-const HyperbolicTan = (num: number) => {
-    return Math.tanh(num);
-}
-const HyperbolicTanDerivative = (num: number) => {
-    return 1 - (Math.tanh(num)**2)
-}
-
-class Layer {
-    id: string = "";
-    neurons: Neuron[] = [];
-
-    constructor(numOfNeurons?: number) {
-        this.id = RandomID();
-
-        if (numOfNeurons != undefined) {
-            this.neurons = [];
-            for (let _ = 0; _ != numOfNeurons; _ += 1) {
-                this.neurons.push(new Neuron());
-            }
-        }
-    }
-}
-const LayerCalculateValues = (currentLayer: Layer, previousLayer: Layer) => {
-    for (let i = 0; i != currentLayer.neurons.length; i += 1) { //each neuron in this layer, is connected to every neuron in the previous layer
-        const neuron = currentLayer.neurons[i];
-
-        let sum = 0;
-        for (let a = 0; a != previousLayer.neurons.length; a += 1) {
-            const prevNeuron = previousLayer.neurons[a];
-            const nodeWeight = WEIGHTS[JSON.stringify([previousLayer.id, currentLayer.id, prevNeuron.id, neuron.id])];
-            sum += prevNeuron.value * nodeWeight
-        }
-        const bias = BIASES[JSON.stringify([neuron.id])];
-        const rawValue = sum + bias;
-        neuron.rawValue = rawValue;
-        neuron.value = Neuron.ActivationFunction(rawValue);
-    }
-}
-
-
-let WEIGHTS: { [k: string] : number } = {}; //k: JSON.stringify([layer1ID, layer2ID, neuron1ID, neuron2ID])
-let BIASES: { [k: string]: number } = {}; //k: JSON.stringify([neuron.id]);
-const RunNetwork = (network: Layer[], inputs: number[]) => {
-    const inputLayer = network[0];
-    for (let i = 0; i != inputs.length; i += 1) {
-        inputLayer.neurons[i].rawValue = inputs[i];
-        inputLayer.neurons[i].value = inputs[i];
-    }
-
-    for (let i = 1; i != network.length; i += 1) {
-        const currentLayer = network[i];
-        const previousLayer = network[i - 1];
-        LayerCalculateValues(currentLayer, previousLayer);
-    }
-
-    return network[network.length - 1]; //return output layer
-}
+const STEP_SIZE = 0.00001; //when the cost starts to fluctuate, just reduce the STEP_SIZE
+const MINI_BATCH_SIZE = 300;
 
 
 
-const CalculateCost = (network: Layer[], dataset: DataPoint[]) => {
-    //use data, pass in x and y, and see how accurately the result predicts true or false
-    let totalCost = 0;
-    for (const data of dataset) {
-        const outputLayer = RunNetwork(network, [data.x, data.y]);
-
-        //outputLayer.neurons[0] represents false, outputLayer.neurons[1] represents true
-        const expectedResultIndex = Number(data.result);
-        totalCost += LayerCalculateAverageCost(outputLayer, expectedResultIndex);
-    }
-
-    const averageCost = totalCost / dataset.length;
-    return averageCost;
-}
-const LayerCalculateAverageCost = (layer: Layer, correctNeuronIndex: number) => {
-    let totalCost = 0;
-    for (let i = 0; i != layer.neurons.length; i += 1) {
-        const neuron = layer.neurons[i];
-        const difference = (i == correctNeuronIndex) ? 1 - neuron.value : 0 - neuron.value;
-        const differenceSquared = difference**2;
-        totalCost += differenceSquared;
-    }
-    const averageCost = totalCost / layer.neurons.length;
-    return averageCost;
-}
-const DecreaseCost = (network: Layer[], weights: {[k: string]: number}, stepSize: number, dataset: DataPoint[]) => {
-    //run through all the weights, for each weight, find slope at current point, then go down the slope by the STEP_SIZE
-    const currentCost = CalculateCost(network, dataset);
-
-    //WEIGHTS
-    const weightVector = []; //applied to the weights after all the new weights have been calculated
-    for (const key in weights) {
-        const deltaX = 0.000000001; //gradient = rise / step
-
-        weights[key] += deltaX;
-        const deltaY = CalculateCost(network, dataset) - currentCost;
-        const gradient = deltaY / deltaX;
-        weights[key] -= deltaX; //store old value to prevent this change from affecting future iterations
-
-        //if gradient is positive, it is an upwards slope, so we want to decrease the weight, negative is downwards slope so we want to increase weight
-        if (gradient == 0) {
-            weightVector.push(0);
-        }
-        else if (gradient > 0) {
-            weightVector.push(-1 * stepSize)
-        }
-        else {
-            weightVector.push(stepSize)   
-        }
-    }
-
-    //apply weightVector
-    let i = 0;
-    for (const key in weights) {
-        weights[key] += weightVector[i];
-        i += 1;
-    }
-}
-
-
-
-function shuffle(array: any[]) {
-    let currentIndex = array.length,  randomIndex;
-  
-    // While there remain elements to shuffle.
-    while (currentIndex != 0) {
-  
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-  
-    return array;
-}
-const CreateMiniBatches = (dataset: any[], batchSize: number) => {
-    const randomOrderDataset = JSON.parse(JSON.stringify(dataset));
-    shuffle(randomOrderDataset); //shuffle before to make batches random
-
-    const chunks: DataPoint[][] = [];
-    const chunkSize = batchSize;
-    for (let i = 0; i < randomOrderDataset.length; i += chunkSize) {
-        const chunk = randomOrderDataset.slice(i, i + chunkSize);
-        chunks.push(chunk);
-    }
-    return chunks;
-}
 
 
 
@@ -213,45 +21,62 @@ const Main = () => {
     VisualiseNeuralNetwork(CANVAS, network, 30);
     console.log("Cost: " + CalculateCost(network, DATA));
 
-
-    //Learn2(network, STEP_SIZE, [DATA[10]]);
-    //console.log("BR");
-    //DecreaseCost(network, WEIGHTS, STEP_SIZE, [DATA[10]]);
-
-    let [miniBatches, miniBatchCounter] = [CreateMiniBatches(DATA, MINI_BATCH_SIZE), 0];
-    const interval1 = setInterval(() => {
-        const miniBatch = miniBatches[miniBatchCounter % miniBatches.length];
-
-        //DecreaseCost(network, WEIGHTS, STEP_SIZE, miniBatch);
-        //DecreaseCost(network, BIASES, STEP_SIZE, miniBatch); //use same function but just replace weights with biases
-        Learn2(network, STEP_SIZE, miniBatch);
-        console.log("Cost: " + CalculateCost(network, DATA));
-
-        SaveWeights();
-        SaveBiases();
-
-        miniBatchCounter += 1;
-        if (miniBatchCounter % miniBatches.length == 0) {
-            //completed 1 epoch
-
-            miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE); //create new mini batches to introduce new variety on every cycle
-        }
-    }, 16);
-
-    const interval2 = setInterval(() => {
+    const interval = setInterval(() => {
         CANVAS.clearCanvas();
         VisualiseData(CANVAS, DATA);
-        VisualiseNeuralNetwork(CANVAS, network, 20);
+        VisualiseNeuralNetwork(CANVAS, network, 100);
+
+        Train(network, DATA, 40, STEP_SIZE, MINI_BATCH_SIZE, () => {
+            console.log("Cost: " + CalculateCost(network, DATA));
+        });
     }, 1000);
 
-    clearInterval(interval1);
-    clearInterval(interval2);
-
     document.onkeydown = ($e) => {
-        if ($e.key.toLowerCase() == " ") {
-            clearInterval(interval1);
-            clearInterval(interval2);
+        if ($e.key == " ") {
+            clearInterval(interval);
         }
     }
+
+    /*
+    //Managed to bring cost down to 0.01941260931267366
+    - Network: [2, 3, 3, 2] (Sigmoid Activation)
+    - Bias data: [0,0,-5.38214000000005,6.136080000000381,-3.0229199999997847,-0.7808200000000335,0.004840000000000427,1.0280799999999584,-1.1979600000001118,1.1139000000001207]
+    - Weight data: [0.005556855132202739,0.023981119762710806,0.00672402034274619,-0.025148655534003923,-0.007637768941736185,0.00837886903301327,-6.256584035851966,5.802006574277471,5.896808797464952,2.6402836635449067,-1.8937382791792197,-3.008323110778759,-3.927738817201862,1.7483417315772702,4.3901105034097645,-5.1998253851105645,5.292505405755149,4.096089169894945,-4.2166749862481385,8.063760569432295,-7.91241973733379]
+    */
 }
 Main();
+
+
+
+const Testing = () => {
+    const network = RetrieveNeuralNetwork([2, 3, 3, 2]);
+
+    const startTime = Date.now();
+    Train(network, DATA, 1000, STEP_SIZE, MINI_BATCH_SIZE)
+    const endTime = Date.now();
+
+    console.log("Cost: " + CalculateCost(network, DATA));
+    console.log("Time: " + ((endTime - startTime) / 1000) + " seconds");
+
+
+    /*
+    //Testing data:
+    - Network: [2, 3, 3, 2]
+    - Reset network (cleared storage data) for every test run
+
+    //1000 cycles backpropogation:
+    1. Cost: 0.19317093182300968, Time: 12.909 seconds
+    2. Cost: 0.23131152956473486, Time: 12.915 seconds
+    3. Cost: 0.25408447357964326, Time: 13.226 seconds
+    4. Cost: 0.1616202893890289, Time: 12.692 seconds
+    5. Cost: 0.20452779158951404, Time: 13.151 seconds
+
+    //1000 cycles finite 
+    1. Cost: 0.2426180347351767, Time: 116.649 seconds
+    2. Cost: 0.25792476732363817, Time: 117.197 seconds
+    3. Cost: 0.25070170031683264, Time: 116.087 seconds
+    4. Cost: 0.25025190879449993, Time: 114.718 seconds
+    5. Cost: 0.2346851979540269, Time: 117.151 seconds
+    */
+}
+//Testing();

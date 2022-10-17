@@ -1,5 +1,7 @@
 "use strict";
 //Manages all functions/objects related to persisting data over reloads
+let WEIGHTS = {}; //k: JSON.stringify([layer1ID, layer2ID, neuron1ID, neuron2ID])
+let BIASES = {}; //k: JSON.stringify([neuron.id]);
 const SaveNeuralNetwork = (layers) => {
     const json = JSON.stringify(layers);
     localStorage.setItem("neuralNetwork", json);

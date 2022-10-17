@@ -67,8 +67,6 @@ const LayerCalculateValues = (currentLayer, previousLayer) => {
         neuron.value = Neuron.ActivationFunction(rawValue);
     }
 };
-let WEIGHTS = {}; //k: JSON.stringify([layer1ID, layer2ID, neuron1ID, neuron2ID])
-let BIASES = {}; //k: JSON.stringify([neuron.id]);
 const RunNetwork = (network, inputs) => {
     const inputLayer = network[0];
     for (let i = 0; i != inputs.length; i += 1) {
@@ -84,24 +82,21 @@ const RunNetwork = (network, inputs) => {
 };
 const CalculateCost = (network, dataset) => {
     //use data, pass in x and y, and see how accurately the result predicts true or false
-    let totalCost = 0;
+    let totalDatasetCost = 0;
     for (const data of dataset) {
         const outputLayer = RunNetwork(network, data.inputs);
         //outputLayer.neurons[0] represents false, outputLayer.neurons[1] represents true
-        totalCost += LayerCalculateAverageCost(outputLayer, data.expectedOutputs);
+        let totalCost = 0;
+        for (let i = 0; i != outputLayer.neurons.length; i += 1) {
+            const neuron = outputLayer.neurons[i];
+            const difference = data.expectedOutputs[i] - neuron.value;
+            const differenceSquared = difference ** 2;
+            totalCost += differenceSquared;
+        }
+        const averageCost = totalCost / outputLayer.neurons.length;
+        totalDatasetCost += averageCost;
     }
-    const averageCost = totalCost / dataset.length;
-    return averageCost;
-};
-const LayerCalculateAverageCost = (layer, expectedOuputs) => {
-    let totalCost = 0;
-    for (let i = 0; i != layer.neurons.length; i += 1) {
-        const neuron = layer.neurons[i];
-        const difference = expectedOuputs[i] - neuron.value;
-        const differenceSquared = difference ** 2;
-        totalCost += differenceSquared;
-    }
-    const averageCost = totalCost / layer.neurons.length;
+    const averageCost = totalDatasetCost / dataset.length;
     return averageCost;
 };
 function shuffle(array) {
@@ -134,9 +129,7 @@ const Train = (network, data, epochIterations, stepSize, miniBatchSize, epochCal
     let i = 0;
     while (i != epochIterations) {
         const miniBatch = miniBatches[miniBatchCounter % miniBatches.length];
-        Learn(network, stepSize, miniBatch);
-        //DecreaseCostFiniteGradient(network, WEIGHTS, stepSize, miniBatch);
-        //DecreaseCostFiniteGradient(network, BIASES, stepSize, miniBatch);
+        Learn1(network, stepSize, miniBatch);
         SaveWeights();
         SaveBiases();
         miniBatchCounter += 1;
@@ -147,34 +140,5 @@ const Train = (network, data, epochIterations, stepSize, miniBatchSize, epochCal
                 epochCallback();
             }
         }
-    }
-};
-const DecreaseCostFiniteGradient = (network, weights, stepSize, dataset) => {
-    //run through all the weights, for each weight, find slope at current point, then go down the slope by the STEP_SIZE
-    const currentCost = CalculateCost(network, dataset);
-    //WEIGHTS
-    const weightVector = []; //applied to the weights after all the new weights have been calculated
-    for (const key in weights) {
-        const deltaX = 0.000000001; //gradient = rise / step
-        weights[key] += deltaX;
-        const deltaY = CalculateCost(network, dataset) - currentCost;
-        const gradient = deltaY / deltaX;
-        weights[key] -= deltaX; //store old value to prevent this change from affecting future iterations
-        //if gradient is positive, it is an upwards slope, so we want to decrease the weight, negative is downwards slope so we want to increase weight
-        if (gradient == 0) {
-            weightVector.push(0);
-        }
-        else if (gradient > 0) {
-            weightVector.push(-1 * stepSize);
-        }
-        else {
-            weightVector.push(stepSize);
-        }
-    }
-    //apply weightVector
-    let i = 0;
-    for (const key in weights) {
-        weights[key] += weightVector[i];
-        i += 1;
     }
 };

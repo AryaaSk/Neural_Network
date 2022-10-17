@@ -28,20 +28,13 @@ const Main = () => {
         }
     }
 
-    clearInterval(interval);
-
-    /*
-    //Managed to bring cost down to 0.01941260931267366
-    - Network: [2, 3, 3, 2] (Sigmoid Activation)
-    - Bias data: [0,0,-5.38214000000005,6.136080000000381,-3.0229199999997847,-0.7808200000000335,0.004840000000000427,1.0280799999999584,-1.1979600000001118,1.1139000000001207]
-    - Weight data: [0.005556855132202739,0.023981119762710806,0.00672402034274619,-0.025148655534003923,-0.007637768941736185,0.00837886903301327,-6.256584035851966,5.802006574277471,5.896808797464952,2.6402836635449067,-1.8937382791792197,-3.008323110778759,-3.927738817201862,1.7483417315772702,4.3901105034097645,-5.1998253851105645,5.292505405755149,4.096089169894945,-4.2166749862481385,8.063760569432295,-7.91241973733379]
-    */
+    clearInterval(interval); //to stop it from running whenever you view the page
 }
 Main();
 
 
 
-const Testing = () => {
+const TestingDifferentLearningMethods = () => {
     const network = RetrieveNeuralNetwork([2, 3, 3, 2]);
 
     const startTime = Date.now();
@@ -72,4 +65,4 @@ const Testing = () => {
     5. Cost: 0.2346851979540269, Time: 117.151 seconds
     */
 }
-//Testing();
+//TestingDifferentLearningMethods();

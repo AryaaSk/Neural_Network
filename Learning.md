@@ -5,8 +5,8 @@
 
 //Calculus:
 RawOutput [RO] = [PreviousOutput][Weight] + [Bias]\
-Output [O] = Sigmoid([RO])
-NeuronCost [NC] = ([ExpectedOutput] - [O])2
+Output [O] = Sigmoid([RO])\
+NeuronCost [NC] = ([ExpectedOutput] - [O])2\
 
 d[NC]/d[Weight] = d[RO]/d[Weight] * d[O]/d[RO] * d[NC]/d[O]
 - d[RO]/d[Weight] = [PreviousOutput]
@@ -19,6 +19,7 @@ AverageCost = TotalNeuronCost / NumOfNeurons
 
 
 
+Confusion:
 - The above only works for neurons in the last/output layer, we also want to adjust neurons in all the other layers
 - We cannot determine [ExpectedOutput] for neurons in hidden layers, so we must keep the derivative as d[NC]/d[AnyWeight], so it is always adjusting weights to improve the overall cost
 
@@ -26,11 +27,11 @@ AverageCost = TotalNeuronCost / NumOfNeurons
 
 Second Layer:
 
-RawOutputPrev [ROp] = [PreviousPreviousOutput][WeightPrev] + [BiasPrev]
-OutputPrev [Op] = Sigmoid([ROp])
-RawOutput [RO] = [PreviousOutput which is also [Op]][Weight] + [Bias]
-Output [O] = Sigmoid([RO])
-NeuronCost [NC] = ([ExpectedOutput] - [O])2
+RawOutputPrev [ROp] = [PreviousPreviousOutput][WeightPrev] + [BiasPrev]\
+OutputPrev [Op] = Sigmoid([ROp])\
+RawOutput [RO] = [PreviousOutput which is also [Op]][Weight] + [Bias]\
+Output [O] = Sigmoid([RO])\
+NeuronCost [NC] = ([ExpectedOutput] - [O])2\
 
 d[NC]/d[WeightPrev] = d[ROp]/d[WeightPrev] * d[Op]/d[ROp] * d[RO]/d[Op] * ([d[O]/d[RO] * d[NC]/d[O]])
 - d[ROp]/d[WeightPrev] = [PreviousPreviousOutput]
@@ -40,6 +41,8 @@ d[NC]/d[WeightPrev] = d[ROp]/d[WeightPrev] * d[Op]/d[ROp] * d[RO]/d[Op] * ([d[O]
 - Therefore d[NC]/d[WeightPrev] = [PreviousPreviousOutput] * (1 - Sigmoid(ROp))Sigmoid(ROp) * [Weight] * (1 - Sigmoid(RO))Sigmoid(RO) * 2([ExpectedOutput] - [O])
 
 
+
+More Confusion:
 - I am a bit confused why the derivative of d[NC]/d[WeightPrev] or even d[NC]/d[Weight] do not contain the original weight variable which they are in respect to
 - This would suggest that the gradient will be constant throughout without adjusting the weight
 - Below is a diagram labelling the different components of the neural network
@@ -49,25 +52,25 @@ d[NC]/d[WeightPrev] = d[ROp]/d[WeightPrev] * d[Op]/d[ROp] * d[RO]/d[Op] * ([d[O]
               ()
     ()                  ()
               ()
-1 = PreviousPreviousOutput
-2 = WeightPrev
-3 = RawOutputPrev [ROp]
-4 = OutputPrev [Op]
-5 = Weight
-6 = RawOutput [RO]
-7 = Output [O]
+1 = PreviousPreviousOutput\
+2 = WeightPrev\
+3 = RawOutputPrev [ROp]\
+4 = OutputPrev [Op]\
+5 = Weight\
+6 = RawOutput [RO]\
+7 = Output [O]\
 
 
 
 I will do one more for the 3rd last layer of weights, to try and see a pattern
 
-RawOutputPrevPrev [ROpp] = [PreviousPreviousPreviousOutput][WeightPrevPrev] + [BiasPrevPrev]
-OutputPrevPrev [Opp] = Sigmoid([ROpp])
-RawOutputPrev [ROp] = [Opp][WeightPrev] + [BiasPrev]
-OutputPrev [Op] = Sigmoid([ROp])
-RawOutput [RO] = [PreviousOutput which is also [Op]][Weight] + [Bias]
-Output [O] = Sigmoid([RO])
-NeuronCost [NC] = ([ExpectedOutput] - [O])2
+RawOutputPrevPrev [ROpp] = [PreviousPreviousPreviousOutput][WeightPrevPrev] + [BiasPrevPrev]\
+OutputPrevPrev [Opp] = Sigmoid([ROpp])\
+RawOutputPrev [ROp] = [Opp][WeightPrev] + [BiasPrev]\
+OutputPrev [Op] = Sigmoid([ROp])\
+RawOutput [RO] = [PreviousOutput which is also [Op]][Weight] + [Bias]\
+Output [O] = Sigmoid([RO])\
+NeuronCost [NC] = ([ExpectedOutput] - [O])2\
 
 d[NC]/d[WeightPrevPrev] = d[ROpp]/d[WeightPrevPrev] * d[Opp]/d[ROpp] * d[ROp]/d[Opp] * ( d[Op]/d[ROp] * d[RO]/d[Op] * ([d[O]/d[RO] * d[NC]/d[O]]) )
 - We already know d[Op]/d[ROp] * d[RO]/d[Op] * ([d[O]/d[RO] * d[NC]/d[O]]) from previous iteration

@@ -2,7 +2,7 @@
 //A single file to hold the DecreaseCost() function, which just has to modify the weights to decrease the overall cost of the network
 //https://www.youtube.com/watch?v=hfMk-kjRv4c
 //https://medium.com/spidernitt/breaking-down-neural-networks-an-intuitive-approach-to-backpropagation-3b2ff958794c
-//https://ai.stackexchange.com/questions/31566/different-ways-to-calculate-backpropagation-derivatives-any-difference
+//https://ai.stackexchange.com/questions/31566/different-ways-to-calculate-backpropagation-derivatives-any-differenc
 const CostDerivative = (actualOutput, expectedOutput) => {
     return 2 * (expectedOutput - actualOutput);
 };

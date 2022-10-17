@@ -1,7 +1,7 @@
 # Neural Network
 ### A project I made to learn about neural networks, how they work, and implementing one myself
 
-# Getting Started
+## Getting Started
 ### Installation
 To get started with this network, simply download [learn.ts](Src/Network/learn.ts), [network.ts](Src/Network/network.ts), and [persistance.ts](Src/Network/persistance.ts)
 
@@ -72,7 +72,7 @@ Neuron.ActivationFunction = NewActivationFunction;
 Neuron.ActivationDerivative = NewActivationFunctionDerivative; //also need to define the derivative of the function, as it is used in backpropogation to reduce the network's cost
 ```
 
-# Demos
+## Demos
 
 ### Points
 I have tested this network on a few datasets, for example I tested it on classifying points into 2 groups, similar to a SVM. You can see the code for this [here](Src/PointsDemo/script.ts)
@@ -85,3 +85,14 @@ Here is a gif showing the network learning to classify the points:
 I also tested it on a XOR gate, which was much simpler as well as being much faster to train.
 
 You can run this example using the code [here](Src/XORDemo/script.ts)
+
+
+## Troubleshooting
+Sometimes the network's cost can get stuck at a large number, in these cases it is usually due to many reasons such as:
+- Saddle points
+- Too little training data
+- Too small mini batch sizes
+- Network is too large, e.g. too many neurons per layer or too many layers, which slows down training dramatically
+
+It can help to completely reset the weights and biases of the network, since they will be reinitialised at random values, so it may put the network in a better position.\
+To do so just go to the brower's local storage, and delete the data under keys **"weightData"** and **"biasData"** (you can also delete the network under the key **"neuralNetwork"** as it will just be reinstalised as well).

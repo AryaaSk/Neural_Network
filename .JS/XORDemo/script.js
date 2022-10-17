@@ -8,7 +8,7 @@ const XOR_DATA = [
 const network = RetrieveNeuralNetwork([2, 3, 1]);
 console.log("Cost: " + CalculateCost(network, XOR_DATA));
 const interval = setInterval(() => {
-    Train(network, XOR_DATA, 40, 0.01, 4, () => {
+    Train(network, XOR_DATA, 40, 0.01, XOR_DATA.length, () => {
         console.log("Cost: " + CalculateCost(network, XOR_DATA));
     });
 }, 1000);

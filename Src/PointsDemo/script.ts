@@ -1,8 +1,3 @@
-interface DataPoint {
-    inputs: number[];
-    expectedOutputs: number[];
-}
-
 const STEP_SIZE = 0.01; //when the cost starts to fluctuate, just reduce the STEP_SIZE
 const MINI_BATCH_SIZE = 100;
 
@@ -33,7 +28,7 @@ const Main = () => {
         }
     }
 
-    //clearInterval(interval);
+    clearInterval(interval);
 
     /*
     //Managed to bring cost down to 0.01941260931267366
@@ -69,7 +64,7 @@ const Testing = () => {
     4. Cost: 0.1616202893890289, Time: 12.692 seconds
     5. Cost: 0.20452779158951404, Time: 13.151 seconds
 
-    //1000 cycles finite 
+    //1000 cycles finite gradient:
     1. Cost: 0.2426180347351767, Time: 116.649 seconds
     2. Cost: 0.25792476732363817, Time: 117.197 seconds
     3. Cost: 0.25070170031683264, Time: 116.087 seconds

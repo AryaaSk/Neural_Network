@@ -1,3 +1,8 @@
+interface DataPoint {
+    inputs: number[];
+    expectedOutputs: number[];
+}
+
 const RandomID = () => {
     return String(Math.floor(Math.random() * (99999999999999 - 10000000000000 + 1) + 10000000000000));
 }
@@ -181,7 +186,7 @@ const Train = (network: Layer[], data: DataPoint[], epochIterations: number, ste
 
         miniBatchCounter += 1;
         if (miniBatchCounter % miniBatches.length == 0) { //completed 1 epoch
-            miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE); //create new mini batches to introduce new variety on every cycle
+            miniBatches = CreateMiniBatches(data, miniBatchSize); //create new mini batches to introduce new variety on every cycle
             i += 1;
 
             if (epochCallback != undefined) {

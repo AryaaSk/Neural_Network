@@ -134,7 +134,7 @@ const Train = (network, data, epochIterations, stepSize, miniBatchSize, epochCal
         SaveBiases();
         miniBatchCounter += 1;
         if (miniBatchCounter % miniBatches.length == 0) { //completed 1 epoch
-            miniBatches = CreateMiniBatches(DATA, MINI_BATCH_SIZE); //create new mini batches to introduce new variety on every cycle
+            miniBatches = CreateMiniBatches(data, miniBatchSize); //create new mini batches to introduce new variety on every cycle
             i += 1;
             if (epochCallback != undefined) {
                 epochCallback();

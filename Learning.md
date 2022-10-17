@@ -47,11 +47,13 @@ More Confusion:
 - This would suggest that the gradient will be constant throughout without adjusting the weight
 - Below is a diagram labelling the different components of the neural network
 
-    2|---(3/4)---|5\
-(1)--|           |--(6/7)\
-            ()\
-()                  ()\
-            ()\
+```
+    2|---(3/4)---|5
+(1)--|           |--(6/7)
+           ()
+()                  ()
+           ()
+```
 
 1 = PreviousPreviousOutput\
 2 = WeightPrev\
@@ -63,7 +65,7 @@ More Confusion:
 
 
 
-I will do one more for the 3rd last layer of weights, to try and see a pattern
+I will do one more for the 3rd last layer of weights, to try and see a pattern:
 
 RawOutputPrevPrev [ROpp] = [PreviousPreviousPreviousOutput][WeightPrevPrev] + [BiasPrevPrev]\
 OutputPrevPrev [Opp] = Sigmoid([ROpp])\

@@ -1,5 +1,6 @@
 //A single file to hold the DecreaseCost() function, which just has to modify the weights to decrease the overall cost of the network
 
+//https://www.youtube.com/watch?v=hfMk-kjRv4c
 //https://medium.com/spidernitt/breaking-down-neural-networks-an-intuitive-approach-to-backpropagation-3b2ff958794c
 //https://ai.stackexchange.com/questions/31566/different-ways-to-calculate-backpropagation-derivatives-any-difference
 
@@ -161,13 +162,14 @@ const Learn1 = (network: Layer[], stepSize: number, dataset: DataPoint[]) => {
     ApplyGradients(stepSize, weightDescentGradients, biasDescentGradients);
 }
 
+//Calculates weight gradients between a neuron and all the nodes connected to it in the previous layer
 const UpdateWeightsBiases = (nodeValue: number, currentNeuron: Neuron, currentlayer: Layer, previousLayer: Layer, weightDescentGradients: {[weightID: string] : number}, biasDescentGradients: {[biasID: string] : number}) => {
     for (const prevNeuron of previousLayer.neurons) {
         const weightKey = JSON.stringify([previousLayer.id, currentlayer.id, prevNeuron.id, currentNeuron.id])
         const PreviousOutput = prevNeuron.value;
         const weightGradient = PreviousOutput * nodeValue;
 
-        weightDescentGradients[weightKey] += weightGradient;
+        weightDescentGradients[weightKey] += weightGradient; //add them instead of assigning new gradient since it needs to layer on top of all other gradients for other data
     }
 
     //d[NC]/d[Bias] = 1 * (1 - Sigmoid(RO))Sigmoid(RO) * 2([ExpectedOutput] - [O])
@@ -201,123 +203,3 @@ const ApplyGradients = (stepSize: number, weightDescentGradients: {[weightID: st
         biasDescentGradients[key] = 0;
     }
 }
-
-
-
-const Learn2 = (network: Layer[], stepSize: number, dataset: DataPoint[]) => {
-    const costGradientWRTW: {[weightID: string] : number } = {};
-    const costGradientWRTB: {[biasID: string] : number } = {};
-    for (const key in WEIGHTS) {
-        costGradientWRTW[key] = 0;
-    }
-    for (const key in BIASES) {
-        costGradientWRTB[key] = 0;
-    }
-
-    for (const data of dataset) {
-        RunNetwork(network, data.inputs); //forward propogate the data through the network
-
-        //The expected output is different for each neuron, it is is outputLayer.neurons[0] and the result is true, then the expected output would be 1
-        //however if it is outputLayer.neurons[1] and the result is true, then the expected output would be 0
-        //outputLayer.neurons[0] represents false, outputLayer.neurons[1] represents true
-        const expectedOutputs = data.expectedOutputs;
-
-        const nodeValues: {[neuronID: string] : number} = {};
-
-        //Calculate output layer node values
-        const outputLayer = network[network.length - 1];
-        for (const [i, neuron] of outputLayer.neurons.entries()) {
-            //console.log(data.result, i, expectedOutputs[i]);
-
-            const costDerivative = CostDerivative(neuron.value, expectedOutputs[i]);
-            const activationDerivative = Neuron.ActivationDerivative(neuron.rawValue);
-            nodeValues[neuron.id] = costDerivative * activationDerivative;
-        }
-
-        //Update gradients for output layer
-        const previousLayer = network[network.length - 2];
-        UpdateGradients(nodeValues, previousLayer, outputLayer, costGradientWRTW, costGradientWRTB);
-
-        //Update hidden layers
-        for (let i = network.length - 2; i != 0; i -= 1) {
-            const hiddenLayer = network[i];
-            const nextLayer = network[i + 1];
-
-            //Calculate hidden layer node values
-            for (const neuron of hiddenLayer.neurons) {
-                let newNodeValue = 0;
-
-                //loop through node values of layer in front of this layer
-                for (const nextNeuron of nextLayer.neurons) {
-                    const oldNodeValue = nodeValues[nextNeuron.id];
-
-                    //get weight between neuron and nextNeuron
-                    const weightedInputDerivative = WEIGHTS[JSON.stringify([hiddenLayer.id, nextLayer.id, neuron.id, nextNeuron.id])];
-                    newNodeValue += weightedInputDerivative * oldNodeValue;
-                }
-
-                newNodeValue *= Neuron.ActivationDerivative(neuron.rawValue);
-                nodeValues[neuron.id] = newNodeValue;
-            }
-
-            //Update gradients for hidden layer
-            const previousHiddenLayer = network[i - 1];
-            UpdateGradients(nodeValues, previousHiddenLayer, hiddenLayer, costGradientWRTW, costGradientWRTB);
-        }
-    }
-
-    //Apply all gradients to WEIGHTS and BIASES
-    ApplyGradients(stepSize, costGradientWRTW, costGradientWRTB);
-}
-
-
-const UpdateGradients = (nodeValues: {[neuronID: string] : number}, previousLayer: Layer, layer: Layer, costGradientWRTW: {[weightID: string] : number }, costGradientWRTB: {[biasID: string] : number }) => {
-    for (const neuron of layer.neurons) {
-        const nodeValue = nodeValues[neuron.id];
-        for (const prevNeuron of previousLayer.neurons) {
-            const derivativeCostWRTWeight = prevNeuron.value * nodeValue;
-
-            //update costGradientW
-            const weightKey = JSON.stringify([previousLayer.id, layer.id, prevNeuron.id, neuron.id])
-            costGradientWRTW[weightKey] += derivativeCostWRTWeight;
-        }
-    }
-
-    for (const neuron of layer.neurons) {
-        const nodeValue = nodeValues[neuron.id];
-        const derivativeCostWRTBias = 1 * nodeValue;
-        
-        //update costGradientB
-        const biasKey = JSON.stringify([neuron.id]);
-        costGradientWRTB[biasKey] += derivativeCostWRTBias;
-    }
-}
-
-
-/*
-const ApplyGradients = (learnRate: number, costGradientWRTW: {[weightID: string] : number }, costGradientWRTB: {[biasID: string] : number }) => {
-    for (const key in WEIGHTS) {
-        const gradient = costGradientWRTW[key];
-        if (gradient == 0) {} //do nothing, since the weight is already at the minimum
-        else if (gradient > 0) {
-            WEIGHTS[key] += learnRate;            
-        }
-        else {
-            WEIGHTS[key] -= learnRate;            
-        }
-        costGradientWRTW[key] = 0;
-    }
-
-    for (const key in BIASES) {
-        const gradient = costGradientWRTB[key];
-        if (gradient == 0) {}
-        else if (gradient > 0) {
-            BIASES[key] += learnRate;            
-        }
-        else {
-            BIASES[key] -= learnRate;            
-        }
-        costGradientWRTB[key] = 0;
-    }
-}
-*/

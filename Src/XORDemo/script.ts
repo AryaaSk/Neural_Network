@@ -13,7 +13,7 @@ const interval = setInterval(() => {
         console.log("Cost: " + CalculateCost(network, XOR_DATA));
     });
 }, 1000);
-clearInterval(interval);
+clearInterval(interval); //to stop it from running whenever you view the page
 
 console.log("[0, 0]: " + RunNetwork(network, [0, 0]).neurons[0].value);
 console.log("[1, 0]: " + RunNetwork(network, [1, 0]).neurons[0].value);

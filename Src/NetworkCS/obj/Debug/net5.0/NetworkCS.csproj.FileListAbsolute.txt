@@ -13,3 +13,5 @@
 /Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/ref/NetworkCS.dll
 /Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.pdb
 /Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.genruntimeconfig.cache
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/bin/Debug/net5.0/Newtonsoft.Json.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.csproj.CopyComplete

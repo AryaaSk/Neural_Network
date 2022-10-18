@@ -146,6 +146,8 @@ namespace NetworkCS {
                 persistance.SaveWeights(this);
                 persistance.SaveBiases(this);
 
+                Console.WriteLine(this.CalculateCost(dataset));
+
                 i += 1;
             }
         }

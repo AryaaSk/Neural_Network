@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "YW/FyfND3jNX24UiihXMJ3S1amR9J+QIxzSr8X6GeT964/hbvfQ01r5FDPhWI4F9fgUc5rE+91mnK/CbrVE7GA==",
+  "dgSpecHash": "wMk3WsfaohhH+hXkDOVmX17bRBdKEHCYTVsxNkgFvPrzK9yQqEjrybNSIehgx2sRx2WlCO3lCJMQWgwhKlmpVw==",
   "success": true,
   "projectFilePath": "/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/NetworkCS.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/Users/aryaask/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

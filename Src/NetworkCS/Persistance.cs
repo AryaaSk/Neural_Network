@@ -7,20 +7,20 @@ namespace NetworkCS {
     class Persistance {
 
         private Random rand = new Random();
-        private decimal WeightFunction() {
-            var randomNumber = new decimal(rand.NextDouble());
+        private double WeightFunction() {
+            var randomNumber = rand.NextDouble();
             randomNumber *= 2;
             randomNumber -= 1;
             return randomNumber; //between -1 and 1
         }
 
         public void InitaliseWeights(ref Network network) {
-            var weightList = new List<decimal>{};
+            var weightList = new List<double>{};
 
             //Find weight data from file
             try {
                 string json = File.ReadAllText("NetworkData/weightData.txt");
-                weightList = JsonSerializer.Deserialize<List<decimal>>(json);
+                weightList = JsonSerializer.Deserialize<List<double>>(json);
             }
             catch {
                 //file doesn't exist, create random weights, then save file
@@ -51,7 +51,7 @@ namespace NetworkCS {
         }
 
         public void SaveWeights(ref Network network) {
-            var weightList = new List<decimal>{};
+            var weightList = new List<double>{};
 
             for (var i = 0; i != network.layers.Count - 1; i += 1) {
                 var layer = network.layers[i];
@@ -59,7 +59,7 @@ namespace NetworkCS {
                 foreach (var neuron in layer.neurons) {
                     foreach (var nextNeuron in nextLayer.neurons) {
                         string weightKey = neuron.id + nextNeuron.id;
-                        decimal weight = network.weights[weightKey];
+                        double weight = network.weights[weightKey];
                         weightList.Add(weight);
                     }
                 }
@@ -70,11 +70,11 @@ namespace NetworkCS {
         }
 
         public void InitialiseBiases(ref Network network) {
-            var biasList = new List<decimal>{};
+            var biasList = new List<double>{};
 
             try {
                 string json = File.ReadAllText("NetworkData/biasData.txt");
-                biasList = JsonSerializer.Deserialize<List<decimal>>(json);
+                biasList = JsonSerializer.Deserialize<List<double>>(json);
             }
             catch {
                 //file doesn't exist, create list of biases = 0
@@ -98,12 +98,12 @@ namespace NetworkCS {
         }
 
         public void SaveBiases(ref Network network) {
-            var biasList = new List<decimal>{};
+            var biasList = new List<double>{};
 
             foreach (var layer in network.layers) {
                 foreach (var neuron in layer.neurons) {
                     string biasKey = neuron.id;
-                    decimal bias = network.biases[biasKey];
+                    double bias = network.biases[biasKey];
                     biasList.Add(bias);
                 }
             }

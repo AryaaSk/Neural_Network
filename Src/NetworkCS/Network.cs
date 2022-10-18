@@ -5,13 +5,17 @@ namespace NetworkCS {
 
     class Neuron {
         public string id;
-        public int rawValue;
-        public int value;
+        public double rawValue;
+        public double value;
 
         public Neuron() {
             this.rawValue = 0;
             this.value = 0;
             this.id = Guid.NewGuid().ToString();
+        }
+
+        public static double Activation(double num) {
+            return 1.0f / (1.0f + (float) Math.Exp(-num));
         }
     }
 
@@ -28,8 +32,8 @@ namespace NetworkCS {
 
     class Network {
         public List<Layer> layers;
-        public Dictionary<string, decimal> weights; //key: neuron1Id + neuron2Id
-        public Dictionary<string, decimal> biases; //key: neuronId
+        public Dictionary<string, double> weights; //key: neuron1Id + neuron2Id
+        public Dictionary<string, double> biases; //key: neuronId
 
         public Network(List<int> config) {
             //create new network using config
@@ -38,7 +42,7 @@ namespace NetworkCS {
                 this.layers.Add(new Layer(neuronCount));
             }
 
-            this.weights = new Dictionary<string, decimal>{};
+            this.weights = new Dictionary<string, double>{};
             for (var i = 0; i != this.layers.Count - 1; i += 1) {
                 var layer = this.layers[i];
                 var nextLayer = this.layers[i + 1];
@@ -51,11 +55,45 @@ namespace NetworkCS {
                 }
             }
 
-            this.biases = new Dictionary<string, decimal>{};
+            this.biases = new Dictionary<string, double>{};
             foreach (var layer in this.layers) {
                 foreach (var neuron in layer.neurons) {
                     string biasKey = neuron.id;
                     this.biases[biasKey] = 0;
+                }
+            }
+        }
+
+
+
+        public void ForwardPropogate(List<double> inputs) {
+            var inputLayer = this.layers[0];
+
+            for (var i = 0; i != inputLayer.neurons.Count; i += 1) {
+                inputLayer.neurons[i].rawValue = inputs[i];
+                //inputLayer.neurons[i].value = Neuron.Activation(inputLayer.neurons[i].rawValue);
+                inputLayer.neurons[i].value = inputLayer.neurons[i].rawValue;
+            }
+
+            for (var i = 1; i != this.layers.Count; i += 1) {
+                var previousLayer = this.layers[i - 1];
+                var layer = this.layers[i];
+
+                foreach (var neuron in layer.neurons) {
+                    double rawValue = 0;
+                    foreach (var previousNeuron in previousLayer.neurons) {
+                        string weightKey = previousNeuron.id + neuron.id;
+                        double weight = this.weights[weightKey];
+                        double previousValue = previousNeuron.value;
+                        rawValue += (previousValue * weight);
+                    }
+
+                    string biasKey = neuron.id;
+                    double bias = this.biases[biasKey];
+                    rawValue += bias;
+
+                    neuron.rawValue = rawValue;
+                    neuron.value = Neuron.Activation(rawValue);
                 }
             }
         }

@@ -13,7 +13,8 @@ namespace NetworkCS
             persistance.InitaliseWeights(ref network);
             persistance.InitialiseBiases(ref network);
 
-            Console.WriteLine(network.biases[network.layers[1].neurons[0].id]);
+            network.ForwardPropogate(new List<double>{0, 0});
+            Console.WriteLine(network.layers[2].neurons[0].value);
         }
     }
 }

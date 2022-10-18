@@ -1,0 +1,15 @@
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/bin/Debug/net5.0/NetworkCS.deps.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/bin/Debug/net5.0/NetworkCS.runtimeconfig.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/bin/Debug/net5.0/NetworkCS.runtimeconfig.dev.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/bin/Debug/net5.0/NetworkCS.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/bin/Debug/net5.0/ref/NetworkCS.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/bin/Debug/net5.0/NetworkCS.pdb
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.csproj.AssemblyReference.cache
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.GeneratedMSBuildEditorConfig.editorconfig
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.AssemblyInfoInputs.cache
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.AssemblyInfo.cs
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.csproj.CoreCompileInputs.cache
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/ref/NetworkCS.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.pdb
+/Users/aryaask/Documents/Website Projects/Neural_Network/Src/NetworkCS/obj/Debug/net5.0/NetworkCS.genruntimeconfig.cache

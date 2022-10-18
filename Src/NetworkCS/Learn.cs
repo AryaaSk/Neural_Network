@@ -1,0 +1,5 @@
+namespace NetworkCS {
+    class Learn {
+        
+    }
+}

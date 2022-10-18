@@ -93,8 +93,7 @@ const CalculateCost = (network, dataset) => {
             const differenceSquared = difference ** 2;
             totalCost += differenceSquared;
         }
-        const averageCost = totalCost / outputLayer.neurons.length;
-        totalDatasetCost += averageCost;
+        totalDatasetCost += totalCost;
     }
     const averageCost = totalDatasetCost / dataset.length;
     return averageCost;

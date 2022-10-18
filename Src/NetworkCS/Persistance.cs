@@ -50,7 +50,7 @@ namespace NetworkCS {
             }
         }
 
-        public void SaveWeights(ref Network network) {
+        public void SaveWeights(Network network) {
             var weightList = new List<double>{};
 
             for (var i = 0; i != network.layers.Count - 1; i += 1) {
@@ -97,7 +97,7 @@ namespace NetworkCS {
             }
         }
 
-        public void SaveBiases(ref Network network) {
+        public void SaveBiases(Network network) {
             var biasList = new List<double>{};
 
             foreach (var layer in network.layers) {

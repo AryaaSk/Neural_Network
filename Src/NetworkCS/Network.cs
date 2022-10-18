@@ -14,8 +14,18 @@ namespace NetworkCS {
             this.id = Guid.NewGuid().ToString();
         }
 
+        public double NeuronCost(double expectedOutput) {
+            return Math.Pow(expectedOutput - this.value, 2);
+        }
+        public double NeuronCostDerivative(double expectedOutput) {
+            return 2 * (expectedOutput - this.value);
+        }
+
         public static double Activation(double num) {
             return 1.0f / (1.0f + (float) Math.Exp(-num));
+        }
+        public static double ActivationDerivative(double num) {
+            return (1 - Neuron.Activation(num)) * Neuron.Activation(num);
         }
     }
 
@@ -30,7 +40,7 @@ namespace NetworkCS {
         }
     }
 
-    class Network {
+    partial class Network {
         public List<Layer> layers;
         public Dictionary<string, double> weights; //key: neuron1Id + neuron2Id
         public Dictionary<string, double> biases; //key: neuronId

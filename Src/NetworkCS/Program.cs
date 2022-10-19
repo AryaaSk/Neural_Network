@@ -39,7 +39,7 @@ namespace NetworkCS
         }
 
         static void PointsDemo() {
-            var network = new Network(new List<int>{2, 3, 2});
+            var network = new Network(new List<int>{2, 20, 2}); //seems to be able to achieve lower cost values by increasing number of neuron in the singular hidden layer, rather than adding more hidden layeres
 
             var persistance = new Persistance();
             persistance.InitaliseWeights(ref network);
@@ -55,7 +55,7 @@ namespace NetworkCS
                 POINTS_DATA.Add(dataPoint);
             }
 
-            network.stepSize = 0.001;
+            network.stepSize = 0.0001;
             network.miniBatchSize = 100;
 
             while (true) {
@@ -65,12 +65,11 @@ namespace NetworkCS
                 persistance.SaveWeights(network);
                 persistance.SaveBiases(network);
 
-                if (cost <= 0.05) {
+                if (cost <= 0.02) {
                     break;
                 }
             }
             Console.WriteLine(network.CalculateCost(POINTS_DATA));
-
             
             /*
             //Comparing to JS version

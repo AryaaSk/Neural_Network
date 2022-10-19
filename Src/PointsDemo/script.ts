@@ -28,7 +28,7 @@ const Main = () => {
         }
     }
 
-    clearInterval(interval); //to stop it from running whenever you view the page
+    //clearInterval(interval); //to stop it from running whenever you view the page
 }
 Main();
 

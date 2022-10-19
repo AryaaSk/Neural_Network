@@ -55,11 +55,14 @@ namespace NetworkCS
                 POINTS_DATA.Add(dataPoint);
             }
 
-            network.stepSize = 0.1;
-            network.miniBatchSize = 80;
+            network.stepSize = 0.01;
+            network.miniBatchSize = 100;
 
-            network.Train(POINTS_DATA, 10000, persistance);
+            //network.Train(POINTS_DATA, 40);
             Console.WriteLine(network.CalculateCost(POINTS_DATA));
+
+            //persistance.SaveWeights(network);
+            //persistance.SaveBiases(network);
 
             //Can't seem to get the cost below 0.47, for some reason
             //Going to try and rebuild from the js version

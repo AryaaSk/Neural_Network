@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace NetworkCS {
 
@@ -22,14 +23,21 @@ namespace NetworkCS {
         public double CalculateCost(List<DataPoint> dataset) {
             double totalCost = 0;
             foreach (var data in dataset) {
+
                 this.ForwardPropogate(data.inputs);
                 var outputLayer = this.layers[this.layers.Count - 1];
 
                 double totalLayerCost = 0;
                 for (var i = 0; i != outputLayer.neurons.Count; i += 1) {
                     double expectedOutput = data.expectedOutputs[i];
-                    double neuronCost = outputLayer.neurons[i].NeuronCost(expectedOutput);
+                    double neuronCost = Neuron.NeuronCost(expectedOutput, outputLayer.neurons[i].value);
                     totalLayerCost += neuronCost;
+
+                    Console.WriteLine(neuronCost);
+                    Console.WriteLine(outputLayer.neurons[i].value); //neuron 0 is always 0 ??? neuron 1 is always 1 ???
+                    Console.WriteLine(JsonSerializer.Serialize(data.inputs));
+                    Console.WriteLine(JsonSerializer.Serialize(data.expectedOutputs));
+                    Console.WriteLine();
                 }
 
                 totalCost += totalLayerCost;
@@ -39,11 +47,11 @@ namespace NetworkCS {
             return averageCost;
         }
 
+        /*
         public void Learn(List<DataPoint> dataset) {
             //first need to find gradients of weights/biases across all datapoints in the dataset
             var weightGradients = new Dictionary<string, double>{};
             var biasGradients = new Dictionary<string, double>{}; //keys are same format as network.weights and network.biases
-
             foreach (var entry in this.weights) {
                 weightGradients[entry.Key] = 0;
             }
@@ -120,21 +128,110 @@ namespace NetworkCS {
                 biasGradients[biasKey] += biasGradient;
             }
         }
+        */
+
         private void ApplyGradients(Dictionary<string, double> weightGradients, Dictionary<string, double> biasGradients) {
-            foreach (var entry in weightGradients) {
+            foreach (var entry in this.weights) {
                 double gradient = weightGradients[entry.Key];
-                this.weights[entry.Key] += (gradient * this.stepSize); //By increasing the weights proportional to the gradient it seemed to fix the constant cost issue
+
+                if (gradient == 0) {} //do nothing, since the weight is already at the minimum
+                else if (gradient > 0) {
+                    this.weights[entry.Key] += this.stepSize;
+                }
+                else {
+                    this.weights[entry.Key] -= this.stepSize;
+                }            
+
+                //this.weights[entry.Key] += (gradient * this.stepSize); //By increasing the weights proportional to the gradient it seemed to fix the constant cost issue
                 weightGradients[entry.Key] = 0;
             }
 
-            foreach (var entry in biasGradients) {
+            foreach (var entry in this.biases) {
                 double gradient = biasGradients[entry.Key];
-                this.biases[entry.Key] += (gradient * this.stepSize);
+                
+                if (gradient == 0) {} //do nothing, since the weight is already at the minimum
+                else if (gradient > 0) {
+                    this.biases[entry.Key] += this.stepSize;
+                }
+                else {
+                    this.biases[entry.Key] -= this.stepSize;
+                } 
+
                 biasGradients[entry.Key] = 0;
             }
         }
 
-        public void Train(List<DataPoint> dataset, int epochCycles, Persistance persistance) {
+        public void Learn(List<DataPoint> dataset) {
+            var weightGradients = new Dictionary<string, double>{};
+            var biasGradients = new Dictionary<string, double>{}; //keys are same format as network.weights and network.biases
+            foreach (var entry in this.weights) {
+                weightGradients[entry.Key] = 0;
+            }
+            foreach (var entry in this.biases) {
+                biasGradients[entry.Key] = 0;
+            }
+
+            foreach (var data in dataset) {
+                this.ForwardPropogate(data.inputs);
+
+                var nodeValues = new Dictionary<string, double>{};
+
+                var outputLayer = this.layers[this.layers.Count - 1];
+                var previousLayer = this.layers[this.layers.Count - 2];
+                for (var i = 0; i != outputLayer.neurons.Count; i += 1) {
+                    var neuron = outputLayer.neurons[i];
+
+                    var activationDerivative = Neuron.ActivationDerivative(neuron.rawValue);
+                    var expectedOutput = data.expectedOutputs[i];
+                    var costDerivative = Neuron.NeuronCostDerivative(expectedOutput, neuron.value);
+
+                    var nodeValue = activationDerivative * costDerivative;
+                    nodeValues[neuron.id] = nodeValue;
+
+                    this.CalculateWeightBiases(nodeValue, neuron, previousLayer, ref weightGradients, ref biasGradients);
+                }
+
+                for (var i = this.layers.Count - 2; i != 0; i -= 1) {
+                    var nextHiddenLayer = this.layers[i + 1];
+                    var layer = this.layers[i];
+                    var previousHiddenLayer = this.layers[i - 1];
+
+                    foreach (var neuron in layer.neurons) {
+                        double sum = 0;
+                        foreach (var nextNeuron in nextHiddenLayer.neurons) {
+                            string weightKey = neuron.id + nextNeuron.id;
+                            var weightBetweenNeurons = this.weights[weightKey];
+                            double nextNeuronNodeValue = nodeValues[nextNeuron.id];
+                            sum += (weightBetweenNeurons * nextNeuronNodeValue);
+                        }
+
+                        double activationDerivative = Neuron.ActivationDerivative(neuron.rawValue);
+                        double nodeValue = activationDerivative * sum;
+                        nodeValues[neuron.id] = nodeValue;
+
+                        this.CalculateWeightBiases(nodeValue, neuron, previousHiddenLayer, ref weightGradients, ref biasGradients);
+                    }
+                }
+            }
+
+            this.ApplyGradients(weightGradients, biasGradients);
+        }
+        private void CalculateWeightBiases(double nodeValue, Neuron currentNeuron, Layer previousLayer, ref Dictionary<string, double> weightGradients, ref Dictionary<string, double> biasGradients) {
+            foreach (var previousNeuron in previousLayer.neurons) {
+                double previousOutput = previousNeuron.value;
+                double weightGradient = previousOutput * nodeValue;
+
+                string weightKey = previousNeuron.id + currentNeuron.id;
+                weightGradients[weightKey] += weightGradient;
+            }
+
+            double biasGradient = 1 * nodeValue;
+            string biasKey = currentNeuron.id;
+            biasGradients[biasKey] += biasGradient;
+        }
+
+
+        public void Train(List<DataPoint> dataset, int epochCycles) {
             int i = 0;
             while (i != epochCycles) {
                 var chunks = this.CreateChunks(dataset);
@@ -142,9 +239,6 @@ namespace NetworkCS {
                 foreach (var chunk in chunks) {
                     this.Learn(chunk);
                 }
-
-                persistance.SaveWeights(this);
-                persistance.SaveBiases(this);
 
                 Console.WriteLine(this.CalculateCost(dataset));
 

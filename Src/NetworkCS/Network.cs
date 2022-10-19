@@ -14,11 +14,11 @@ namespace NetworkCS {
             this.id = Guid.NewGuid().ToString();
         }
 
-        public double NeuronCost(double expectedOutput) {
-            return Math.Pow(expectedOutput - this.value, 2);
+        public static double NeuronCost(double expectedOutput, double actualOutput) {
+            return Math.Pow(expectedOutput - actualOutput, 2);
         }
-        public double NeuronCostDerivative(double expectedOutput) {
-            return 2 * (expectedOutput - this.value);
+        public static double NeuronCostDerivative(double expectedOutput, double actualOutput) {
+            return 2 * (expectedOutput - actualOutput);
         }
 
         public static double Activation(double num) {

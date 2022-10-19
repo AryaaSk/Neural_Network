@@ -41,6 +41,10 @@ namespace NetworkCS {
             return averageCost;
         }
 
+        //First section calculates node values for entire layer, then calculates weight and bias gradients for layer in next step
+        //Second section is how it works on JS version, calculates node value for a single neuron, then calculates weights and bias gradients for that single neuron
+        //Second section works, but first section has some kind of bug which stops it from working properly
+
         /*
         public void Learn(List<DataPoint> dataset) {
             //first need to find gradients of weights/biases across all datapoints in the dataset
@@ -64,7 +68,7 @@ namespace NetworkCS {
                 for (var i = 0; i != outputLayer.neurons.Count; i += 1) {
                     var neuron = outputLayer.neurons[i];
                     double expectedOutput = data.expectedOutputs[i];
-                    double costDerivative = neuron.NeuronCostDerivative(expectedOutput);
+                    double costDerivative = Neuron.NeuronCostDerivative(expectedOutput, neuron.value);
                     double activationDerivative = Neuron.ActivationDerivative(neuron.rawValue);
 
                     double nodeValue = activationDerivative * costDerivative;
@@ -122,7 +126,6 @@ namespace NetworkCS {
                 biasGradients[biasKey] += biasGradient;
             }
         }
-        */
 
         private void ApplyGradients(Dictionary<string, double> weightGradients, Dictionary<string, double> biasGradients) {
             foreach (var entry in this.weights) {
@@ -154,6 +157,7 @@ namespace NetworkCS {
                 biasGradients[entry.Key] = 0;
             }
         }
+        */
 
         public void Learn(List<DataPoint> dataset) {
             var weightGradients = new Dictionary<string, double>{};
@@ -223,7 +227,36 @@ namespace NetworkCS {
             string biasKey = currentNeuron.id;
             biasGradients[biasKey] += biasGradient;
         }
+        private void ApplyGradients(Dictionary<string, double> weightGradients, Dictionary<string, double> biasGradients) {
+            foreach (var entry in this.weights) {
+                double gradient = weightGradients[entry.Key];
 
+                if (gradient == 0) {} //do nothing, since the weight is already at the minimum
+                else if (gradient > 0) {
+                    this.weights[entry.Key] += this.stepSize;
+                }
+                else {
+                    this.weights[entry.Key] -= this.stepSize;
+                }            
+
+                //this.weights[entry.Key] += (gradient * this.stepSize); //By increasing the weights proportional to the gradient it seemed to fix the constant cost issue
+                weightGradients[entry.Key] = 0;
+            }
+
+            foreach (var entry in this.biases) {
+                double gradient = biasGradients[entry.Key];
+                
+                if (gradient == 0) {} //do nothing, since the weight is already at the minimum
+                else if (gradient > 0) {
+                    this.biases[entry.Key] += this.stepSize;
+                }
+                else {
+                    this.biases[entry.Key] -= this.stepSize;
+                } 
+
+                biasGradients[entry.Key] = 0;
+            }
+        }
 
         public void Train(List<DataPoint> dataset, int epochCycles) {
             int i = 0;

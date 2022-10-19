@@ -52,7 +52,18 @@ namespace NetworkCS {
                 biasGradients[entry.Key] = 0;
             }
 
+            //Learn method is faster when using Parallelism, however only when removing the lock
+            //Single thread average speed: 5.1ms
+            //Parallel average speed: 4.5ms (with locks for weightGradients and biasGradients)
+            //Parallel average speed 1.8ms (no locks, no sure how safe it is)
+
+            //BACKPROPOGATION NOT WORKING PROPERLY WITH PARALLELISM, getting different values for the weight gradients each time, compared with constant values for the single threaded
+            //Order of the dataset doesn't matter, which is the biggest difference between parallel and single threaded, however there must be more differences
+
+            //By locking weightGradients and biasGradients in each iteration of the parallel loop, it solves the issue. However there is no point doing this as it defeats the purpose of parallelism
+
             foreach (var data in dataset) {
+            //System.Threading.Tasks.Parallel.ForEach(dataset, (data) => {
                 this.ForwardPropogate(data.inputs);
                 var nodeValues = new Dictionary<string, double>{}; //key = neuron.id
 
@@ -97,7 +108,7 @@ namespace NetworkCS {
                     var previousLayer = this.layers[i - 1];
                     CalculateGradients(layer, previousLayer, nodeValues, ref weightGradients, ref biasGradients);
                 }
-            }
+            };
 
             //We now have all the weight gradients and biases, we just need to apply them
             ApplyGradients(weightGradients, biasGradients);
@@ -112,7 +123,7 @@ namespace NetworkCS {
                     double weightGradient = previousOutput * nodeValue;
 
                     string weightKey = previousNeuron.id + neuron.id;
-                    weightGradients[weightKey] += weightGradient;
+                    weightGradients[weightKey] += weightGradient; //Not using locks since it didn't seem like a problem and it drastically increased the speed, however I am not sure how safe this is
                 }
 
                 //d[NC]/d[Bias] = 1 * (1 - Sigmoid(RO))Sigmoid(RO) * 2([ExpectedOutput] - [O])

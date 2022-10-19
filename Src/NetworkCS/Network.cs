@@ -81,8 +81,8 @@ namespace NetworkCS {
 
             for (var i = 0; i != inputLayer.neurons.Count; i += 1) {
                 inputLayer.neurons[i].rawValue = inputs[i];
-                inputLayer.neurons[i].value = Neuron.Activation(inputLayer.neurons[i].rawValue);
-                //inputLayer.neurons[i].value = inputLayer.neurons[i].rawValue;
+                //inputLayer.neurons[i].value = Neuron.Activation(inputLayer.neurons[i].rawValue);
+                inputLayer.neurons[i].value = inputLayer.neurons[i].rawValue;
             }
 
             for (var i = 1; i != this.layers.Count; i += 1) {

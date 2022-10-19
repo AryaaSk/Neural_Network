@@ -32,12 +32,6 @@ namespace NetworkCS {
                     double expectedOutput = data.expectedOutputs[i];
                     double neuronCost = Neuron.NeuronCost(expectedOutput, outputLayer.neurons[i].value);
                     totalLayerCost += neuronCost;
-
-                    Console.WriteLine(neuronCost);
-                    Console.WriteLine(outputLayer.neurons[i].value); //neuron 0 is always 0 ??? neuron 1 is always 1 ???
-                    Console.WriteLine(JsonSerializer.Serialize(data.inputs));
-                    Console.WriteLine(JsonSerializer.Serialize(data.expectedOutputs));
-                    Console.WriteLine();
                 }
 
                 totalCost += totalLayerCost;

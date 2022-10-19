@@ -39,7 +39,7 @@ namespace NetworkCS
         }
 
         static void PointsDemo() {
-            var network = new Network(new List<int>{2, 3, 3, 2});
+            var network = new Network(new List<int>{2, 3, 2});
 
             var persistance = new Persistance();
             persistance.InitaliseWeights(ref network);
@@ -55,17 +55,49 @@ namespace NetworkCS
                 POINTS_DATA.Add(dataPoint);
             }
 
-            network.stepSize = 0.01;
-            network.miniBatchSize = 100;
+            network.stepSize = 0.0001;
+            network.miniBatchSize = 300;
 
-            //network.Train(POINTS_DATA, 40);
+            while (true) {
+                network.Train(POINTS_DATA, 40);
+                double cost = network.CalculateCost(POINTS_DATA);
+                if (cost <= 0.04) {
+                    break;
+                }
+            }
             Console.WriteLine(network.CalculateCost(POINTS_DATA));
 
             //persistance.SaveWeights(network);
             //persistance.SaveBiases(network);
 
-            //Can't seem to get the cost below 0.47, for some reason
-            //Going to try and rebuild from the js version
+            
+            /*
+            //Comparing to JS version
+            Console.WriteLine("BIASES");
+            for (var i = 0; i != network.layers.Count; i += 1) {
+                for (var a = 0; a != network.layers[i].neurons.Count; a += 1) {
+                    Console.WriteLine($"Layer: {i}, Neuron: {a}, Bias: {network.biases[network.layers[i].neurons[a].id]}");
+                }
+            }
+
+            Console.WriteLine("WEIGHTS");
+            for (var i = 0; i != network.layers.Count - 1; i += 1) {
+                var layer = network.layers[i];
+                var nextLayer = network.layers[i + 1];
+                for (var a = 0; a != layer.neurons.Count; a += 1) {
+                    var neuron = layer.neurons[a];
+                    for (var b = 0; b != nextLayer.neurons.Count; b += 1) {
+                        var nextNeuron = nextLayer.neurons[b];
+                        Console.WriteLine($"Layer: {i} -> {i + 1}, Neuron: {a} -> {b}, Weight: {network.weights[neuron.id + nextNeuron.id]}");
+                    }
+                }
+            }
+
+            //WEIGHTS AND BIASES ARE ALL THE SAME IN BOTH NETWORKS, NEXT I WILL RUN IT
+            network.ForwardPropogate(new List<double>{450, 450});
+
+            Console.WriteLine(network.CalculateCost(POINTS_DATA));
+            */
         }
     }
 }

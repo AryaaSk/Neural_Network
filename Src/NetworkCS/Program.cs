@@ -55,20 +55,21 @@ namespace NetworkCS
                 POINTS_DATA.Add(dataPoint);
             }
 
-            network.stepSize = 0.0001;
-            network.miniBatchSize = 300;
+            network.stepSize = 0.001;
+            network.miniBatchSize = 100;
 
             while (true) {
                 network.Train(POINTS_DATA, 40);
                 double cost = network.CalculateCost(POINTS_DATA);
-                if (cost <= 0.04) {
+
+                persistance.SaveWeights(network);
+                persistance.SaveBiases(network);
+
+                if (cost <= 0.05) {
                     break;
                 }
             }
             Console.WriteLine(network.CalculateCost(POINTS_DATA));
-
-            //persistance.SaveWeights(network);
-            //persistance.SaveBiases(network);
 
             
             /*

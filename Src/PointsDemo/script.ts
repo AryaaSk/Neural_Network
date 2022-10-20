@@ -3,7 +3,7 @@ const MINI_BATCH_SIZE = 100;
 
 
 const Main = () => {
-    const network = RetrieveNeuralNetwork([2, 3, 2]);
+    const network = RetrieveNeuralNetwork([2, 10, 10, 10, 2]);
     Neuron.ActivationFunction = Sigmoid;
     Neuron.ActivationDerivative = SigmoidDerivative;
 
@@ -29,30 +29,6 @@ const Main = () => {
     }
 
     clearInterval(interval); //to stop it from running whenever you view the page
-
-    /*
-    //Need to view network structure
-    console.log("BIASES");
-    for (const [i, layer] of network.entries()) {
-        for (const [a, neuron] of layer.neurons.entries()) {
-            console.log(`Layer: ${i}, Neuron: ${a}, Bias: ${BIASES[JSON.stringify([neuron.id])]}`);
-        }
-    }
-
-    console.log("WEIGHTS");
-    for (let i = 0; i != network.length - 1; i += 1) {
-        const layer = network[i];
-        const nextLayer = network[i + 1];
-        for (const [a, neuron] of layer.neurons.entries()) {
-            for (const [b, nextNeuron] of nextLayer.neurons.entries()) {
-                console.log(`Layer: ${i} -> ${i + 1}, Neuron: ${a} -> ${b}, Weight: ${WEIGHTS[JSON.stringify([layer.id, nextLayer.id, neuron.id, nextNeuron.id])]}`);
-            }
-        }
-    }
-
-    RunNetwork(network, [450, 450]);
-    console.log(JSON.parse(JSON.stringify(network)));
-    */
 }
 Main();
 

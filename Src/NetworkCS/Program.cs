@@ -39,14 +39,14 @@ namespace NetworkCS
         }
 
         static void PointsDemo() {
-            var network = new Network(new List<int>{2, 10, 2}); //seems to be able to achieve lower cost values by increasing number of neuron in the singular hidden layer, rather than adding more hidden layeres
+            var network = new Network(new List<int>{2, 10, 10, 10, 2}); //seems to be able to achieve lower cost values by increasing number of neuron in the singular hidden layer, rather than adding more hidden layeres
 
             var persistance = new Persistance();
             persistance.InitaliseWeights(ref network);
             persistance.InitialiseBiases(ref network);
 
             var POINTS_DATA = new List<DataPoint>{};
-            var pointsJSON = File.ReadAllText("Data/points1.txt");
+            var pointsJSON = File.ReadAllText("Data/points2.txt");
             dynamic obj = Newtonsoft.Json.JsonConvert.DeserializeObject(pointsJSON);
             foreach (var data in obj) {
                 var inputs = data.inputs.ToObject<List<double>>();
@@ -56,18 +56,17 @@ namespace NetworkCS
             }
 
             network.stepSize = 0.001;
-            network.miniBatchSize = 100;
+            network.miniBatchSize = 300;
 
             while (true) {
-                network.Train(POINTS_DATA, 40);
-
+                network.Train(POINTS_DATA, 10);
                 double cost = network.CalculateCost(POINTS_DATA);
                 Console.WriteLine(cost);
 
                 persistance.SaveWeights(network);
                 persistance.SaveBiases(network);
 
-                if (cost <= 0.1) {
+                if (cost <= 0.02) {
                     break;
                 }
             }

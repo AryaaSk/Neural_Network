@@ -41,11 +41,14 @@ namespace NetworkCS {
     }
 
     partial class Network {
+        private List<int> config;
         public List<Layer> layers;
         public Dictionary<string, double> weights; //key: neuron1Id + neuron2Id
         public Dictionary<string, double> biases; //key: neuronId
 
         public Network(List<int> config) {
+            this.config = config;
+
             //create new network using config
             this.layers = new List<Layer>{};
             foreach (var neuronCount in config) {

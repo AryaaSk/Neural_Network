@@ -1,0 +1,15 @@
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/DigitRecognition.deps.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/DigitRecognition.runtimeconfig.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/DigitRecognition.runtimeconfig.dev.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/DigitRecognition.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/ref/DigitRecognition.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/DigitRecognition.pdb
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.csproj.AssemblyReference.cache
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.GeneratedMSBuildEditorConfig.editorconfig
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.AssemblyInfoInputs.cache
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.AssemblyInfo.cs
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.csproj.CoreCompileInputs.cache
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/ref/DigitRecognition.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.pdb
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/obj/Debug/net5.0/DigitRecognition.genruntimeconfig.cache

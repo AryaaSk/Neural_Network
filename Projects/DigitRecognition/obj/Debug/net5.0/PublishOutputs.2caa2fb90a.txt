@@ -1,0 +1,4 @@
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/publish/DigitRecognition.dll
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/publish/DigitRecognition.deps.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/publish/DigitRecognition.runtimeconfig.json
+/Users/aryaask/Documents/Website Projects/Neural_Network/Projects/DigitRecognition/bin/Debug/net5.0/publish/DigitRecognition.pdb

@@ -1,5 +1,7 @@
 #Image Files
 /mnist_png
+/Projects/DigitRecognition/Data/*
+!/Projects/DigitRecognition/Data/MnistReader.cs
 
 #System Files
 .DS_Store

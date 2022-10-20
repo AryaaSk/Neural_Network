@@ -53,7 +53,12 @@ namespace NetworkCS {
             }
 
             System.Threading.Tasks.Parallel.ForEach(dataset, (data) => {
-                var threadNetwork = this.Copy(); //Create copy of network, otherwise all the different threads would be trying to forward propogate on the same network at the same time
+                //Create copy of network, otherwise all the different threads would be trying to forward propogate on the same network at the same time
+                var threadNetwork = new Network(this.config);
+                threadNetwork.weights = this.weights;
+                threadNetwork.biases = this.biases;
+                threadNetwork.layers = this.layers.Copy();
+
                 threadNetwork.ForwardPropogate(data.inputs);
 
                 var nodeValues = new Dictionary<string, double>{}; //key = neuron.id

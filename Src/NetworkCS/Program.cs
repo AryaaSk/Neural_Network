@@ -55,54 +55,39 @@ namespace NetworkCS
                 POINTS_DATA.Add(dataPoint);
             }
 
-            network.stepSize = 0.01;
+            network.stepSize = 0.001;
             network.miniBatchSize = 100;
 
-            /*
             while (true) {
                 network.Train(POINTS_DATA, 40);
+
                 double cost = network.CalculateCost(POINTS_DATA);
+                Console.WriteLine(cost);
 
                 persistance.SaveWeights(network);
                 persistance.SaveBiases(network);
 
-                if (cost <= 0.04) {
+                if (cost <= 0.1) {
                     break;
                 }
             }
             Console.WriteLine(network.CalculateCost(POINTS_DATA));
-            */
 
-            Console.WriteLine(network.CalculateCost(POINTS_DATA));
-            network.Learn(POINTS_DATA);
-            Console.WriteLine(network.CalculateCost(POINTS_DATA));
-            
             /*
-            //Comparing to JS version
-            Console.WriteLine("BIASES");
-            for (var i = 0; i != network.layers.Count; i += 1) {
-                for (var a = 0; a != network.layers[i].neurons.Count; a += 1) {
-                    Console.WriteLine($"Layer: {i}, Neuron: {a}, Bias: {network.biases[network.layers[i].neurons[a].id]}");
-                }
-            }
+            //Parallel vs Single threaded speed testing (Network config: [2, 10 ,2], DATA: 'Data/points1.txt', Step Size: 0.01, Mini Batch Size: 100)
+            Average time of Train() function (40 epoch cycles), repeated until cost <= 0.15
 
-            Console.WriteLine("WEIGHTS");
-            for (var i = 0; i != network.layers.Count - 1; i += 1) {
-                var layer = network.layers[i];
-                var nextLayer = network.layers[i + 1];
-                for (var a = 0; a != layer.neurons.Count; a += 1) {
-                    var neuron = layer.neurons[a];
-                    for (var b = 0; b != nextLayer.neurons.Count; b += 1) {
-                        var nextNeuron = nextLayer.neurons[b];
-                        Console.WriteLine($"Layer: {i} -> {i + 1}, Neuron: {a} -> {b}, Weight: {network.weights[neuron.id + nextNeuron.id]}");
-                    }
-                }
-            }
+            Single threaded:
+            - 3112.7ms
+            - 3086.9ms
+            - 3126.5ms
 
-            //WEIGHTS AND BIASES ARE ALL THE SAME IN BOTH NETWORKS, NEXT I WILL RUN IT
-            network.ForwardPropogate(new List<double>{450, 450});
+            Parallel:
+            - 597.4ms
+            - 602.8ms
+            - 592.4ms
 
-            Console.WriteLine(network.CalculateCost(POINTS_DATA));
+            Parallel is much faster which is expected
             */
         }
     }

@@ -30,7 +30,9 @@ namespace NetworkCS
             network.stepSize = 0.1;
             network.miniBatchSize = XOR_DATA.Count;
 
-            //network.Train(XOR_DATA, 10000, persistance);
+            //network.Train(XOR_DATA, 10000);
+            //persistance.SaveWeights(network);
+            //persistance.SaveBiases(network);
             //Console.WriteLine(network.CalculateCost(XOR_DATA));
 
             network.ForwardPropogate(new List<double>{1, 0});

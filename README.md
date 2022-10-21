@@ -1,5 +1,6 @@
 # Neural Network
 ### A project I made to learn about neural networks, how they work, and implementing one myself
+**I have also made a version of this in C#, which supports multithreading for faster performance, you can use see that [here](/Src/NetworkCS)**
 
 ## Getting Started
 ### Installation
@@ -75,7 +76,7 @@ Neuron.ActivationDerivative = NewActivationFunctionDerivative; //also need to de
 ## Demos
 
 ### Points
-I have tested this network on a few datasets, for example I tested it on classifying points into 2 groups, similar to a SVM. You can see the code for this [here](Src/PointsDemo/script.ts)
+I have tested this network on a few datasets, for example I tested it on classifying points into 2 groups, similar to a SVM. You can see the code for this [here](Src/Network/PointsDemo/script.ts)
 
 Here is a gif showing the network learning to classify the points:
 
@@ -84,7 +85,7 @@ Here is a gif showing the network learning to classify the points:
 ### XOR Gate
 I also tested it on a XOR gate, which was much simpler as well as being much faster to train.
 
-You can run this example using the code [here](Src/XORDemo/script.ts)
+You can run this example using the code [here](Src/Network/XORDemo/script.ts)
 
 
 ## Troubleshooting
